@@ -1,0 +1,14 @@
+# #Change it with yout own information !
+# #POSTGRESS CONNECTION 
+# DB_HOST= localhost  
+# DB_PORT= 5432
+# DB_USERNAME= postgres
+# DB_NAME= basketStore
+# DB_PASSWORD= 123456
+
+database:
+  host: localhost
+  port: 5432
+  dbname: basketStore
+  username: postgres
+  password: 123456
