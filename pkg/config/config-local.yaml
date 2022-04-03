@@ -12,3 +12,14 @@ DBConfig:
   Dbname: basketStore
   Username: postgres
   Password: 123456
+
+
+ServerConfig:
+  AppVersion: 1.0.0
+  Mode: Development
+  RoutePrefix: /api/v1/patika-book-api
+  Debug: false
+  Port: 8080
+  TimeoutSecs: 60
+  ReadTimeoutSecs: 60
+  WriteTimeoutSecs: 12
