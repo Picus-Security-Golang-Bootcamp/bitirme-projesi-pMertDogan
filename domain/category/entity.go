@@ -7,7 +7,6 @@ import (
 	"mime/multipart"
 	"strconv"
 
-	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -49,7 +48,7 @@ func CategoryFromCSV(file *multipart.FileHeader) (Categorys, error) {
 	defer csvFile.Close()
 
 	if err != nil {
-		utils.Logger.Error("error opening csv file", zap.Error(err))
+		zap.L().Error("error opening csv file", zap.Error(err))
 		return nil, errors.New("error opening csv file" + err.Error())
 	}
 	//creating a *csv.reader
@@ -58,7 +57,7 @@ func CategoryFromCSV(file *multipart.FileHeader) (Categorys, error) {
 
 	csvData, err := reader.ReadAll()
 	if err != nil {
-		utils.Logger.Error("error reading csv file", zap.Error(err))
+		zap.L().Error("error reading csv file", zap.Error(err))
 		return nil, errors.New("error reading csv file" + err.Error())
 	}
 	//in csv file, each comma represent a column, with this knowledge every row has 12 column and each column parse where they are belong.
@@ -78,7 +77,7 @@ func CategoryFromCSV(file *multipart.FileHeader) (Categorys, error) {
 			nCategory.CategoryDescription = each[1]
 			nCategory.CategoryIsActive, err = strconv.ParseBool(each[2])
 			if err != nil {
-				utils.Logger.Error("error parsing bool", zap.Error(err))
+				zap.L().Error("error parsing bool", zap.Error(err))
 				return nil, errors.New("error, please validate  values" + err.Error())
 			}
 			nCategoryS = append(nCategoryS, nCategory)
@@ -87,7 +86,7 @@ func CategoryFromCSV(file *multipart.FileHeader) (Categorys, error) {
 			// Headers should be CategoryName,CategoryDescription,CategoryIsActive
 			//We dont care header row but this add additional check to avoid false file usage
 			if each[0] != "CategoryName" || each[1] != "CategoryDescription" || each[2] != "CategoryIsActive" {
-				utils.Logger.Error("error, please validate  headers. Supported csv headers are 	CategoryName,CategoryDescription,CategoryIsActive")
+				zap.L().Error("error, please validate  headers. Supported csv headers are 	CategoryName,CategoryDescription,CategoryIsActive")
 				return nil, errors.New("error, please validate  headers. Supported csv headers are 	CategoryName,CategoryDescription,CategoryIsActive")
 			}
 		}

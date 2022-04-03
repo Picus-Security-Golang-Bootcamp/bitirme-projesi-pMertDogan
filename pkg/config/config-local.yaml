@@ -6,7 +6,7 @@
 # DB_NAME= basketStore
 # DB_PASSWORD= 123456
 
-Database:
+DBConfig:
   Host: localhost
   Port: 5432
   Dbname: basketStore
