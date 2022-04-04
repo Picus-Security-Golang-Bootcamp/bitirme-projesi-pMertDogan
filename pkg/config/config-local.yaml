@@ -23,3 +23,7 @@ ServerConfig:
   TimeoutSecs: 60
   ReadTimeoutSecs: 60
   WriteTimeoutSecs: 12
+
+JWTConfig:
+  SessionTime: 3600
+  SecretKey: dummySecretKey

@@ -10,9 +10,10 @@ type Users []User
 
 type User struct {
 	gorm.Model
-	UserName string
-	Email string
+	UserName string 
+	Email string 	`gorm:"unique"` //make sure email is unique
 	Password string
+	IsAdmin  string
 	// FalseLoginCount int
 	// ExpiresAt string
 }

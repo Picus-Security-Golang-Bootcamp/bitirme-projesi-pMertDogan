@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	ServerConfig ServerConfig
-	// JWTConfig    JWTConfig
+	JWTConfig    JWTConfig
 	DBConfig DBConfig
 	Logger   Logger
 }
@@ -49,6 +49,13 @@ type Logger struct {
 	Encoding    string
 	Level       string
 }
+
+//JWTConfig:
+type JWTConfig struct {
+	SessionTime int
+	SecretKey   string
+}
+
 
 // LoadConfig file from given path
 func LoadConfig(filename string) (*Config, error) {

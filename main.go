@@ -10,8 +10,10 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/database"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/category"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/check"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/user"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/graceful"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
 	logger "github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/logging"
 	"go.uber.org/zap"
 )
@@ -38,14 +40,14 @@ func main() {
 	router := gin.Default()
 	//init Repos
 	category.CategoryRepoInit(db)
-
+	user.UserRepoInit(db)
 	//Migrate Structure
 	category.Repo().Migrations()
+	user.Repo().Migrations()
 
 	category.CategoryControllerDef(router)
 	check.CheckControllerDef(router)
-	// router.Run(":8080")
-
+	appAuth.AuthHandler(router,cfg)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.ServerConfig.Port),

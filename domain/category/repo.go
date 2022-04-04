@@ -33,15 +33,17 @@ func (c *CategoryRepository) Migrations() {
 }
 
 //Save All Categories to SQL
+//Maybe we need optimize this function for larger imports.
 //https://gorm.io/docs/create.html#Batch-Insert
+// Will help us but we need make it work same as our logic
+//create or update
+// c.db.Clauses(clause.OnConflict{
+// 	UpdateAll: true,
+//   }).Create(&categories)
+// c.db.FirstOrCreate(&categories)
+
 func (c *CategoryRepository) CreateCategories(categories Categorys) {
 	//categoryName is uniq
-	// c.db.Create(&categories)
-
-	// c.db.Clauses(clause.OnConflict{
-	// 	UpdateAll: true,
-	//   }).Create(&categories)
-	// c.db.FirstOrCreate(&categories)
 
 	for _, v := range categories {
 		//https://stackoverflow.com/questions/39333102/how-to-create-or-update-a-record-with-gorm
