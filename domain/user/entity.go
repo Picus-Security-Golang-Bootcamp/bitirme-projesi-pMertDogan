@@ -13,7 +13,7 @@ type User struct {
 	UserName string 
 	Email string 	`gorm:"unique"` //make sure email is unique
 	Password string
-	IsAdmin  string
+	IsAdmin  bool 
 	// FalseLoginCount int
 	// ExpiresAt string
 }

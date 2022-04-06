@@ -7,16 +7,28 @@ import (
 )
 
 //Our token struct
-type DecodedToken struct {
-	UserId string   `json:"userId"`
-	Email  string   `json:"email"`
-	Iat    int      `json:"iat"`
-	Exp   int64 `json:"exp"`
-	IsAdmin  string `json:"isAdmin"`
+// Reserved claims: https://tools.ietf.org/html/rfc7519#section-4.1
+// iss (issuer), *exp (expiration time), sub (subject), aud (audience)
+type DecodedJWTToken struct {
+	UserId  string `json:"userId"`
+	Email   string `json:"email"`
+	Iat     int    `json:"iat"` //issued at  *optional
+	Exp     int64  `json:"exp"` //expiration time *Must be used
+	IsAdmin bool `json:"isAdmin"`
+	IsItAccesToken bool `json:"isItAccesToken"`
 	// Iss    string   `json:"iss"`
 }
 
-//
+/*
+https://auth0.com/learn/json-web-tokens/
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  secret)
+
+  header.payload.signature
+
+*/
 func GenerateToken(claims *jwt.Token, secret string) string {
 	hmacSecretString := secret
 	hmacSecret := []byte(hmacSecretString)
@@ -25,7 +37,7 @@ func GenerateToken(claims *jwt.Token, secret string) string {
 	return token
 }
 
-func VerifyToken(token string, secret string) *DecodedToken {
+func VerifyToken(token string, secret string) *DecodedJWTToken {
 	hmacSecretString := secret
 	hmacSecret := []byte(hmacSecretString)
 
@@ -43,7 +55,7 @@ func VerifyToken(token string, secret string) *DecodedToken {
 
 	decodedClaims := decoded.Claims.(jwt.MapClaims)
 
-	var decodedToken DecodedToken
+	var decodedToken DecodedJWTToken
 	jsonString, _ := json.Marshal(decodedClaims)
 	json.Unmarshal(jsonString, &decodedToken)
 

@@ -17,7 +17,7 @@ DBConfig:
 ServerConfig:
   AppVersion: 1.0.0
   Mode: Development
-  RoutePrefix: /api/v1/patika-book-api
+  RoutePrefix: /api/v1/basketStore
   Debug: false
   Port: 8080
   TimeoutSecs: 60
@@ -25,5 +25,13 @@ ServerConfig:
   WriteTimeoutSecs: 12
 
 JWTConfig:
-  SessionTime: 3600
+  # SessionTime: 3600
   SecretKey: dummySecretKey
+  RefreshTokenLifeMinute : 10
+  AccesTokenLifeMinute : 1440 
+
+# Admin account is created if its not exist,please update it with your own information before first start
+Admin:
+  # Username: admin
+  Password: admin
+  Email: admin@localhost.com

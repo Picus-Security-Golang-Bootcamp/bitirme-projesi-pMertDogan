@@ -11,12 +11,13 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/category"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/check"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/user"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/graceful"
-	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
 	logger "github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/logging"
 	"go.uber.org/zap"
 )
+
 
 func main() {
 
@@ -44,8 +45,9 @@ func main() {
 	//Migrate Structure
 	category.Repo().Migrations()
 	user.Repo().Migrations()
+	user.Repo().CreateAdminIfNotExist(cfg)
 
-	category.CategoryControllerDef(router)
+	category.CategoryControllerDef(router,cfg)
 	check.CheckControllerDef(router)
 	appAuth.AuthHandler(router,cfg)
 
@@ -66,7 +68,7 @@ func main() {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-
-	log.Println("Book store service started")
+	
+	log.Println("Basket Service started")
 	graceful.ShutdownGin(srv, time.Duration(cfg.ServerConfig.TimeoutSecs*int64(time.Second)))
 }

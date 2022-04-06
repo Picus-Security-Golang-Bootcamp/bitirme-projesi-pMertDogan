@@ -12,6 +12,7 @@ type Config struct {
 	JWTConfig    JWTConfig
 	DBConfig DBConfig
 	Logger   Logger
+	Admin	Admin
 }
 
 
@@ -27,6 +28,7 @@ type ServerConfig struct {
 }
 
 /*
+YAML conversion 
 DBConfig:
   Host: localhost
   Port: 5432
@@ -52,10 +54,16 @@ type Logger struct {
 
 //JWTConfig:
 type JWTConfig struct {
-	SessionTime int
+	// SessionTime int
 	SecretKey   string
+	AccesTokenLifeMinute int
+	RefreshTokenLifeMinute int
 }
 
+type Admin struct{
+	Password string
+	Email string
+}
 
 // LoadConfig file from given path
 func LoadConfig(filename string) (*Config, error) {

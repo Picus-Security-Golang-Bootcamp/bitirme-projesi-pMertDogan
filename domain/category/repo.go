@@ -54,6 +54,23 @@ func (c *CategoryRepository) CreateCategories(categories Categorys) {
 		}
 	}
 
+	/*
+		Maybe we can use it, doing same thing
+		https://gorm.io/docs/advanced_query.html#FirstOrCreate can be used
+				// User not found, initialize it with give conditions and Assign attributes
+			db.Where(User{Name: "non_existing"}).Assign(User{Age: 20}).FirstOrCreate(&user)
+			// SELECT * FROM users WHERE name = 'non_existing' ORDER BY id LIMIT 1;
+			// INSERT INTO "users" (name, age) VALUES ("non_existing", 20);
+			// user -> User{ID: 112, Name: "non_existing", Age: 20}
+
+			// Found user with `name` = `jinzhu`, update it with Assign attributes
+			db.Where(User{Name: "jinzhu"}).Assign(User{Age: 20}).FirstOrCreate(&user)
+			// SELECT * FROM users WHERE name = 'jinzhu' ORDER BY id LIMIT 1;
+			// UPDATE users SET age=20 WHERE id = 111;
+			// user -> User{ID: 111, Name: "jinzhu", Age: 20}
+
+	*/
+
 }
 
 //Get All Categories from DB

@@ -1,7 +1,10 @@
 package user
 
 import (
+
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/crypto"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -45,14 +48,15 @@ func (c *UserRepository) CheckIsUserExistWithThisEmail(email string) (*User, err
 	if result.Error == gorm.ErrRecordNotFound {
 		return nil, nil
 	} else if result.Error != nil {
-		return  nil, result.Error
+		return nil, result.Error
 	}
 	//return true and password (Hash)
-	return  &user, nil
+	return &user, nil
 }
 
 //register user with his email and password(hash)
 func (c *UserRepository) RegisterUser(email string, password string) error {
+
 	//hash user password with bcrypt
 	//https://godoc.org/golang.org/x/crypto/bcrypt
 
@@ -62,7 +66,43 @@ func (c *UserRepository) RegisterUser(email string, password string) error {
 	if err != nil {
 		return err
 	}
-	//save user to database
-	c.db.Create(&User{Email: email, Password: passwordHashed})
+
+	// save user to database
+	result := c.db.Create(&User{Email: email, Password: passwordHashed})
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+//register user with his email and password(hash)
+func (c *UserRepository) CreateAdminIfNotExist(cfg *config.Config) error {
+
+	//hash user password with bcrypt
+	//https://godoc.org/golang.org/x/crypto/bcrypt
+	passwordHashed, err := customCrypto.HashPassword(cfg.Admin.Password)
+	//if there is an error on hashing password
+	if err != nil {
+		return err
+	}
+	var user User
+	user.UserName = "admin"
+	user.Password = passwordHashed
+	user.Email = cfg.Admin.Email
+	user.IsAdmin = true
+
+	// zap.L().Info(cfg.Admin.Email)
+
+	//if there is no admin account is created , create it
+	if result := c.db.Where("user_name = ?", "admin").First(&user); result.RowsAffected == 0 {
+		//We can use this one direclty without if check
+		c.db.FirstOrCreate(&user, user)
+		zap.L().Info("admin account created")
+	}
+
+	// // save user to database
+	// c.db.FirstOrCreate(&user, user)
+
 	return nil
 }

@@ -4,19 +4,25 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/jwt"
 
 	"go.uber.org/zap"
 )
 
-func CategoryControllerDef(router *gin.Engine) {
+func CategoryControllerDef(router *gin.Engine, cfg *config.Config) {
 
 	c := router.Group("/category")
+	//https://github.com/gin-gonic/gin#using-middleware
+	//Use JWT verification middleware
+	c.Use(jwtUtils.JWTAuthMiddleware(cfg.JWTConfig.SecretKey))
 	{
 		UploadCategorysFromCSV(router, c)
 
 		// c.POST("/submit", submitEndpoint)
 		// c.POST("/read", readEndpoint)
 	}
+
 }
 
 // https://gin-gonic.com/docs/examples/upload-file/single-file/
