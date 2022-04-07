@@ -89,6 +89,8 @@ func (c *CategoryRepository) GetAllCategories() (Categorys, error) {
 
 }
 
+//Limit the number of rows to be returned
+//We can use above function GetAllCategories with parameter like limit but we seperated them
 func (c *CategoryRepository) GetAllCategoriesWithLimit(limit int) (Categorys, error) {
 	var categories Categorys
 	var result *gorm.DB

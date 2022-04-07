@@ -10,6 +10,7 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/database"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/category"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/check"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/user"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
@@ -46,10 +47,12 @@ func main() {
 	//init Repos
 	category.CategoryRepoInit(db)
 	user.UserRepoInit(db)
+	product.ProductRepoInit(db)
 	//Migrate Structure
 	category.Repo().Migrations()
 	user.Repo().Migrations()
 	user.Repo().CreateAdminIfNotExist(cfg)
+	product.Repo().Migrations()
 
 	category.CategoryControllerDef(router,cfg)
 	check.CheckControllerDef(router)

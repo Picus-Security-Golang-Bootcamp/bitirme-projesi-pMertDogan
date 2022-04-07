@@ -15,10 +15,10 @@ type Categorys []Category
 
 type Category struct {
 	gorm.Model
-	CategoryName        string `gorm:"unique"` //make sure category name is unique
-	CategoryDescription string
+	CategoryName        string `gorm:"unique" binding:"required,min=3,alphanum"` //make sure category name is unique
+	CategoryDescription string `binding:"required,min=3,alphanum"`
 	// CategoryParentID    int
-	CategoryIsActive bool
+	CategoryIsActive bool `gorm:"default:true"`
 }
 
 // fromJson Category

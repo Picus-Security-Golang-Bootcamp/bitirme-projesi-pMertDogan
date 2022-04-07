@@ -19,9 +19,6 @@ func AuthHandler(r *gin.Engine, cfg *config.Config) {
 	r.POST("/register", a.register)
 	TokenControllerDef(r,cfg)
 
-	// r.Use(mw.AuthMiddleware(cfg.ServerConfig.Mode))
-	//r.POST("/decode", a.VerifyToken)
-
 }
 
 

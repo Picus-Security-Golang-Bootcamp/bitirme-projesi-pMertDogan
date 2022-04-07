@@ -1,7 +1,7 @@
 package category
 
 type ResponseModel struct{
-	ErrMsg string
-	ResponseCode int
-	Data Categorys
+	ErrMsg string `json:"errMsg,omitempty"`
+	ResponseCode int `json:"responseCode"`
+	Data Categorys `json:"data,omitempty"`
 }
