@@ -6,7 +6,9 @@ import (
 
 	"net/http"
 )
-
+/*
+Handle request and check is they are admins and token is acces token
+*/
 func JWTAdminMiddleware(secretKey string, accesTokenLifeMinute int64) gin.HandlerFunc {
 
 	return func(c *gin.Context) {

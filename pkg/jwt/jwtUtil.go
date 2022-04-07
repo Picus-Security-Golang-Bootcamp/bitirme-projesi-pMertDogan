@@ -39,18 +39,9 @@ func GenerateToken(claims *jwt.Token, secret string) string {
 }
 
 /*
-This Method is verify token checks exp dates too!
+This Method is verify token checks exp dates too! Then bind token to struct
+https://pkg.go.dev/github.com/golang-jwt/jwt/v4@v4.4.1?utm_source=gopls#Parse
 
-if token.Valid {
-	fmt.Println("You look nice today")
-} else if errors.Is(err, jwt.ErrTokenMalformed) {
-	fmt.Println("That's not even a token")
-} else if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet) {
-	// Token is either expired or not active yet
-	fmt.Println("Timing is everything")
-} else {
-	fmt.Println("Couldn't handle this token:", err)
-}
 */
 func VerifyDecodeToken(token string, secret string) (*DecodedJWTToken, error) {
 	hmacSecretString := secret
@@ -71,9 +62,6 @@ func VerifyDecodeToken(token string, secret string) (*DecodedJWTToken, error) {
 		}
 	}
 
-	// if !decoded.Valid {
-	// 	return nil
-	// }
 
 	decodedClaims := decoded.Claims.(jwt.MapClaims)
 

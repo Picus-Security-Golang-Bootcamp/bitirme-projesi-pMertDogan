@@ -1,6 +1,8 @@
 package category
 
 import (
+	"strconv"
+
 	"gorm.io/gorm"
 	// "gorm.io/gorm/clause"
 )
@@ -100,5 +102,40 @@ func (c *CategoryRepository) GetAllCategoriesWithLimit(limit int) (Categorys, er
 
 }
 
-//https://gorm.io/docs/advanced_query.html#Locking-FOR-UPDATE
-func update() {}
+func (c *CategoryRepository) GetAllCategoriesWithPagination(page, pageSize string) (Categorys, error) {
+
+	var categories Categorys
+	result := c.db.Scopes(paginate(page, pageSize)).Find(&categories)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return categories, nil
+
+}
+
+func paginate(page, pageSize string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+
+		page, _ := strconv.Atoi(page)
+		if page == 0 {
+			page = 1
+		}
+
+		pageSize, _ := strconv.Atoi(pageSize)
+		if page == 0 {
+			page = 1
+		}
+
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
+}
