@@ -1,7 +1,6 @@
 package user
 
 import (
-
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/crypto"
 	"go.uber.org/zap"
@@ -55,20 +54,22 @@ func (c *UserRepository) CheckIsUserExistWithThisEmail(email string) (*User, err
 }
 
 //register user with his email and password(hash)
-func (c *UserRepository) RegisterUser(email string, password string) error {
-
+func (c *UserRepository) RegisterUser(reqUser RegisterRequestDTO) error {
 	//hash user password with bcrypt
 	//https://godoc.org/golang.org/x/crypto/bcrypt
 
-	passwordHashed, err := customCrypto.HashPassword(password)
+	passwordHashed, err := customCrypto.HashPassword(reqUser.Password)
 
 	//if there is an error on hashing password
 	if err != nil {
 		return err
 	}
 
+	//covert it to user to save it to database
+	toUser := User{Email: reqUser.Email, Password: passwordHashed, UserName: reqUser.Name}
+
 	// save user to database
-	result := c.db.Create(&User{Email: email, Password: passwordHashed})
+	result := c.db.Create(&toUser)
 
 	if result.Error != nil {
 		return result.Error

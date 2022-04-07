@@ -11,9 +11,10 @@ func (a *authHandler) register(c *gin.Context) {
 
 	var req user.RegisterRequestDTO
 	var res user.ResponseModel
-	//extract user from request
+	//extract user from request with binding validation 
 	if err := c.Bind(&req); err != nil {
-		res.ErrMsg = "Your request body is not valid. Please check your request body. In Body email and password are required."
+		res.ErrMsg = "Your request body is not valid. Please check your request body."
+		res.Err = err.Error()
 		res.ResponseCode = http.StatusBadRequest
 		c.JSON(http.StatusBadRequest, res)
 		return
@@ -23,25 +24,28 @@ func (a *authHandler) register(c *gin.Context) {
 	 userR, err := user.Repo().CheckIsUserExistWithThisEmail(req.Email)
 	//isUserExist return true if user exist on DB :)
 	if err != nil {
-		res.ErrMsg = "Something went wrong. Please try again later."
+		res.ErrMsg = "Something went wrong. Please try again later." 
+		res.Err = err.Error()
 		res.ResponseCode = http.StatusInternalServerError
-		c.JSON(http.StatusInternalServerError, res)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, res)
+		// c.AbortWithStatusJSON(http.StatusInternalServerError, res)
 		return
 	}
 
 	if userR != nil {
 		res.ErrMsg = "This email is already registered."
 		res.ResponseCode = http.StatusBadRequest
-		c.JSON(http.StatusBadRequest, res)
+		c.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 	//we can register user
-	err = user.Repo().RegisterUser(req.Email, req.Password)
+	err = user.Repo().RegisterUser(req)
 
 	if err != nil {
 		res.ErrMsg = "Something went wrong. Please try again later."
+		res.Err = err.Error()
 		res.ResponseCode = http.StatusInternalServerError
-		c.JSON(http.StatusInternalServerError, res)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, res)
 		return
 	}
 

@@ -27,8 +27,8 @@ ServerConfig:
 JWTConfig:
   # SessionTime: 3600
   SecretKey: dummySecretKey
-  RefreshTokenLifeMinute : 10
-  AccesTokenLifeMinute : 1440 
+  RefreshTokenLifeMinute : 1440
+  AccesTokenLifeMinute : 1 
 
 # Admin account is created if its not exist,please update it with your own information before first start
 Admin:

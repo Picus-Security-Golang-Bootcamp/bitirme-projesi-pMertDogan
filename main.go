@@ -19,7 +19,10 @@ import (
 )
 
 
+
 func main() {
+
+	
 
 	//Load Config with depency injection
 	cfg, err := config.LoadConfig("config-local")
@@ -36,6 +39,7 @@ func main() {
 	if err != nil {
 		zap.L().Fatal("cannot connect to database")
 	}
+
 
 	//Init Gin
 	router := gin.Default()

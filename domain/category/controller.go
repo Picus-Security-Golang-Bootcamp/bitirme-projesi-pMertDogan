@@ -15,7 +15,7 @@ func CategoryControllerDef(router *gin.Engine, cfg *config.Config) {
 	c := router.Group("/category")
 	//https://github.com/gin-gonic/gin#using-middleware
 	//Use JWT verification middleware
-	c.Use(jwtUtils.JWTAuthMiddleware(cfg.JWTConfig.SecretKey))
+	c.Use(jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey,cfg.JWTConfig.AccesTokenLifeMinute))
 	{
 		UploadCategorysFromCSV(router, c)
 

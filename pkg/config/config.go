@@ -56,8 +56,8 @@ type Logger struct {
 type JWTConfig struct {
 	// SessionTime int
 	SecretKey   string
-	AccesTokenLifeMinute int
-	RefreshTokenLifeMinute int
+	AccesTokenLifeMinute int64
+	RefreshTokenLifeMinute int64
 }
 
 type Admin struct{

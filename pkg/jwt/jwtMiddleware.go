@@ -7,26 +7,43 @@ import (
 	"net/http"
 )
 
-func JWTAuthMiddleware(secretKey string) gin.HandlerFunc {
+func JWTAdminMiddleware(secretKey string, accesTokenLifeMinute int64) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		zap.L().Info("JWTAuthMiddleware is triggered")
+		zap.L().Debug("JWTAuthMiddleware is triggered")
 		if c.GetHeader("Authorization") != "" {
-			decodedClaims := VerifyToken(c.GetHeader("Authorization"), secretKey)
+			decodedClaims, err := VerifyDecodeToken(c.GetHeader("Authorization"), secretKey)
+
+			//HANDLE JWT Errors
+			if err != nil {
+				c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+				c.Abort()
+				return
+			}
+
 			if decodedClaims != nil {
-				//Only admins can acces this route with acces token
-				if decodedClaims.IsAdmin &&  decodedClaims.IsItAccesToken {
-					c.Next()
+				//ACCEPT ACCES TOKEN
+				if !decodedClaims.IsItAccesToken {
+					c.JSON(http.StatusForbidden, gin.H{"error": "Please provide acces token!"})
 					c.Abort()
 					return
 				}
+				//Only admins can acces this route with acces token
+				if decodedClaims.IsAdmin {
+					c.Next()
+					// c.Abort()
+					return
+				}
+				c.JSON(http.StatusForbidden, gin.H{"error": "You are not admin!"})
+				c.Abort()
+				return
 			}
-
-			c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to use this endpoint!"})
+			c.JSON(http.StatusForbidden, gin.H{"error": "Token is invalid! Unable parse token!"})
 			c.Abort()
 			return
+
 		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized!"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Please provide token!"})
 		}
 		c.Abort()
 		return
