@@ -13,6 +13,7 @@ func ProductControllerDef(router *gin.Engine, cfg *config.Config) {
 
 	product := router.Group("/product")
 
+	// product.POST("/",  CreateProduct)
 	product.POST("/", jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute), CreateProduct)
 	// cat.GET("/", GetAllCategoriesWithPagination)
 	

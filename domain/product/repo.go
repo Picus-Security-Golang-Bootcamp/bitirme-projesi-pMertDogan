@@ -30,7 +30,7 @@ func (c *ProductRepository) Migrations() {
 }
 
 
-
+//Create single product
 func (c *ProductRepository) Create(product Product) error {
 	result := c.db.Create(&product)
 
@@ -39,4 +39,17 @@ func (c *ProductRepository) Create(product Product) error {
 	}
 
 	return nil
+}
+
+//Get single product by sku with relations
+func (c *ProductRepository) GetBySkuWithRelations(sku string) (Product, error) {
+	var product Product
+	//get product by sku with relations
+	result := c.db.Joins("Store").Joins("Category").Where("sku = ?", sku).First(&product)
+
+	if result.Error != nil {
+		return product, result.Error
+	}
+
+	return product, nil
 }

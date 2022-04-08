@@ -8,9 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/database"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/category"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/check"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/store"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/user"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
@@ -48,15 +50,21 @@ func main() {
 	category.CategoryRepoInit(db)
 	user.UserRepoInit(db)
 	product.ProductRepoInit(db)
+	store.StoreRepoInit(db)
 	//Migrate Structure
 	category.Repo().Migrations()
 	user.Repo().Migrations()
-	user.Repo().CreateAdminIfNotExist(cfg)
 	product.Repo().Migrations()
+	// store.Repo().Migrations()
 
+	//Create Admin , Store etc
+	domain.InitDBDefaults(cfg)
+
+	//Init Routes
 	category.CategoryControllerDef(router,cfg)
 	check.CheckControllerDef(router)
 	appAuth.AuthHandler(router,cfg)
+	product.ProductControllerDef(router,cfg)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.ServerConfig.Port),

@@ -13,6 +13,7 @@ type Config struct {
 	DBConfig DBConfig
 	Logger   Logger
 	Admin	Admin
+	StoreData	StoreData
 }
 
 
@@ -63,6 +64,14 @@ type JWTConfig struct {
 type Admin struct{
 	Password string
 	Email string
+}
+
+type StoreData struct{
+	Name string
+	Description string
+	Phone string
+	Email string
+	Address string
 }
 
 // LoadConfig file from given path
