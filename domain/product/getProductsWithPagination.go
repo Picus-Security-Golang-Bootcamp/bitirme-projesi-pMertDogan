@@ -1,4 +1,4 @@
-package category
+package product
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
 )
 
-func GetAllCategoriesWithPagination(c *gin.Context) {
+func GetAllProductWithPagination(c *gin.Context) {
 
 	response := domain.ResponseModel{}
 	//get query params
@@ -17,14 +17,15 @@ func GetAllCategoriesWithPagination(c *gin.Context) {
 	
 
 	//get all categories with pagination
-	v, err := Repo().GetAllCategoriesWithPagination(pageNo, pageSize)
-
+	v, err := Repo().GetAllWithPagination(pageNo, pageSize)
+	
 	if err != nil {
 		response.ResponseCode = http.StatusInternalServerError
 		response.ErrMsg = "error getting  categories with pagination"
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
+
 	//No data found
 	if len(v) == 0 {
 		response.ResponseCode = http.StatusNotFound
@@ -37,6 +38,7 @@ func GetAllCategoriesWithPagination(c *gin.Context) {
 	response.Data = v
 	response.PageNo = pageNo
 	response.PageSize = pageSize
+	
 	c.JSON(http.StatusOK, response)
 
 }

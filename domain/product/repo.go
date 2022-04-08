@@ -1,6 +1,9 @@
 package product
 
-import "gorm.io/gorm"
+import (
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
+	"gorm.io/gorm"
+)
 
 type ProductRepository struct {
 	db *gorm.DB
@@ -52,4 +55,20 @@ func (c *ProductRepository) GetBySkuWithRelations(sku string) (Product, error) {
 	}
 
 	return product, nil
+}
+
+//return all products with relations
+func (c *ProductRepository) GetAllWithPagination(page, pageSize string) (Products, error) {
+
+	var products Products
+	// product := Product
+	//resturn paginated data
+	result := c.db.Scopes(domain.Paginate(page, pageSize)).Joins("Store").Joins("Category").Find(&products)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return products, nil
+
 }
