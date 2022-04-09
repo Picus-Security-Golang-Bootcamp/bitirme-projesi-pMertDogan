@@ -74,14 +74,12 @@ func (c *ProductRepository) GetAllWithPagination(page, pageSize string) (Product
 }
 
 //return all products with relations
-func (c *ProductRepository) SearchProducts( searchText string) (Products, error) {
+func (c *ProductRepository) SearchProducts( searchText,page, pageSize  string) (Products, error) {
 
 
 	//https://www.compose.com/articles/mastering-postgresql-tools-full-text-search-and-phrase-search/
 	var products Products
-	// product := Product
-	//resturn paginated data
-	// result := c.db.Scopes(domain.Paginate("1", "10")).Joins("Store").Joins("Category").Find(&products)
+	
 	result := c.db.
 	Where("product_name LIKE ?", "%"+searchText+"%").
 	Or("products.description LIKE ?", "%"+searchText+"%").
@@ -90,6 +88,7 @@ func (c *ProductRepository) SearchProducts( searchText string) (Products, error)
 	//hardcoded store name search :/
 	Or(" \"Store\".\"name\" LIKE ?", "%"+searchText+"%").
 	Or("\"Category\".\"category_name\" LIKE ?", "%"+searchText+"%").
+	Scopes(domain.Paginate(page, pageSize)).
 	Joins("Store").Joins("Category").Find(&products).Limit(10)
 
 	if result.Error != nil {

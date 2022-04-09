@@ -2,6 +2,7 @@ package product
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
@@ -11,6 +12,12 @@ import (
 func Search(c *gin.Context) {
 	//Json
 	c.Header("Content-Type", "application/json")
+
+	//get query params
+		//get query params
+		pageSize := c.DefaultQuery("pageSize", "10")
+		page := c.DefaultQuery("page", "1")
+	
 
 	var responseModel domain.ResponseModel
 
@@ -25,7 +32,7 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	v, err := Repo().SearchProducts(searchText)
+	v, err := Repo().SearchProducts(searchText,page,pageSize)
 
 	if err != nil {
 		responseModel.ErrMsg = "error getting products"
@@ -38,6 +45,7 @@ func Search(c *gin.Context) {
 
 	responseModel.Data = v
 	responseModel.ResponseCode = http.StatusOK
+	responseModel.PageSize = strconv.Itoa(len(v))
 	c.JSON(responseModel.ResponseCode, responseModel)
 
 }
