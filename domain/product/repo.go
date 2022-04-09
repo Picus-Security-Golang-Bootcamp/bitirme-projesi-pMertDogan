@@ -72,3 +72,46 @@ func (c *ProductRepository) GetAllWithPagination(page, pageSize string) (Product
 	return products, nil
 
 }
+
+//return all products with relations
+func (c *ProductRepository) SearchProducts( searchText string) (Products, error) {
+
+
+	//https://www.compose.com/articles/mastering-postgresql-tools-full-text-search-and-phrase-search/
+	var products Products
+	// product := Product
+	//resturn paginated data
+	// result := c.db.Scopes(domain.Paginate("1", "10")).Joins("Store").Joins("Category").Find(&products)
+	result := c.db.
+	Where("product_name LIKE ?", "%"+searchText+"%").
+	Or("products.description LIKE ?", "%"+searchText+"%").
+	Or("color LIKE ?", "%"+searchText+"%").
+	Or("sku LIKE ?", "%"+searchText+"%").
+	//hardcoded store name search :/
+	Or(" \"Store\".\"name\" LIKE ?", "%"+searchText+"%").
+	Or("\"Category\".\"category_name\" LIKE ?", "%"+searchText+"%").
+	Joins("Store").Joins("Category").Find(&products).Limit(10)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return products, nil
+
+}
+
+//create product 
+func (c *ProductRepository) CreateBulkProduct(products Products) {
+	//categoryName is uniq
+
+	for _, v := range products {
+		//https://stackoverflow.com/questions/39333102/how-to-create-or-update-a-record-with-gorm
+		//If its not exist just create it else update it
+		//SKU is uniq
+		if c.db.Model(&v).Where("sku = ?", v.Sku).Updates(&v).RowsAffected == 0 {
+			c.db.Create(&v)
+			//zero means not found
+		}
+	}
+
+}

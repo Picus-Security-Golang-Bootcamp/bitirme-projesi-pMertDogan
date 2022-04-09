@@ -11,7 +11,7 @@ import (
 func CreateProduct(c *gin.Context) {
 	//Json
 	c.Header("Content-Type", "application/json")
-
+	
 	var reqProduct ReqCreateDTO
 	var responseModel domain.ResponseModel
 

@@ -15,6 +15,8 @@ func ProductControllerDef(router *gin.Engine, cfg *config.Config) {
 
 	// product.POST("/",  CreateProduct)
 	product.POST("/", jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute), CreateProduct)
+	product.POST("/bulk", jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute), CreateBulkProduct)
 	product.GET("/", GetAllProductWithPagination)
+	product.POST("/search", Search)
 	
 }
