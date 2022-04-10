@@ -147,7 +147,7 @@ func (c *ProductRepository) Update(id string, patched Product) (*Product, error)
 	}
 	//patch the produc
 
-	c.db.Model(&old).Updates(patched).Where("id = ?", id)
+	result = c.db.Model(&old).Updates(patched).Where("id = ?", id)
 
 	if result.Error != nil {
 		return nil, result.Error

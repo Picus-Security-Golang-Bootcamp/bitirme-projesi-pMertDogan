@@ -8,4 +8,5 @@ type UpdateProductDTO struct {
 	Price       int    `json:"price" `
 	StockCount  int    `json:"stockCount"`
 	StoreID     int    `json:"storeId" `
+	CategoryID 	int    `json:"categoryId" `
 }
