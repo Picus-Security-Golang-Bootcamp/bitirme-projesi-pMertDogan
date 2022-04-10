@@ -50,7 +50,7 @@ func (c *CategoryRepository) CreateCategories(categories Categorys) {
 	for _, v := range categories {
 		//https://stackoverflow.com/questions/39333102/how-to-create-or-update-a-record-with-gorm
 		//If its not exist just create it else update it
-		if c.db.Model(&v).Where("category_name = ?", v.CategoryName).Updates(&v).RowsAffected == 0 {
+		if c.db.Model(&v).Unscoped().Where("category_name = ?", v.CategoryName).Updates(&v).RowsAffected == 0 {
 			c.db.Create(&v)
 			//zero means not found
 		}

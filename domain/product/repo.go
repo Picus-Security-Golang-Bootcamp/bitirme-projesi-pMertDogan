@@ -78,16 +78,19 @@ func (c *ProductRepository) SearchProducts(searchText, page, pageSize string) (P
 	//https://www.compose.com/articles/mastering-postgresql-tools-full-text-search-and-phrase-search/
 	var products Products
 
+	//ILIKE is case insensitive
 	result := c.db.
-		Where("product_name LIKE ?", "%"+searchText+"%").
-		Or("products.description LIKE ?", "%"+searchText+"%").
-		Or("color LIKE ?", "%"+searchText+"%").
-		Or("sku LIKE ?", "%"+searchText+"%").
+		Where("product_name ILIKE ?", "%"+searchText+"%").
+		Or("products.description ILIKE ?", "%"+searchText+"%").
+		Or("color ILIKE ?", "%"+searchText+"%").
+		Or("sku ILIKE ?", "%"+searchText+"%").
 		//hardcoded store name search :/
-		Or(" \"Store\".\"name\" LIKE ?", "%"+searchText+"%").
-		Or("\"Category\".\"category_name\" LIKE ?", "%"+searchText+"%").
+		Or(" \"Store\".\"name\" ILIKE ?", "%"+searchText+"%").
+		Or("\"Category\".\"category_name\" ILIKE ?", "%"+searchText+"%").
 		Scopes(domain.Paginate(page, pageSize)).
 		Joins("Store").Joins("Category").Find(&products).Limit(10)
+
+	// result := c.db.Raw("select * from products  	Join categories ON categories.id = products.category_id Join stores ON stores.id = products.store_id where sku ILIKE ? 	or product_name ILIKE ? 	or products.description ILIKE ?", "%"+searchText+"%", "%"+searchText+"%", "%"+searchText+"%").Scan(&products)	
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -105,9 +108,10 @@ func (c *ProductRepository) CreateBulkProduct(products Products) {
 		//https://stackoverflow.com/questions/39333102/how-to-create-or-update-a-record-with-gorm
 		//If its not exist just create it else update it
 		//SKU is uniq
-		if c.db.Model(&v).Where("sku = ?", v.Sku).Updates(&v).RowsAffected == 0 {
-			c.db.Create(&v)
+		//with the help of the unsoped we can detect soft deleted products if we cant detect its try to create it 
+		if c.db.Model(&v).Unscoped().Where("sku = ?", v.Sku).Updates(&v).RowsAffected == 0 {
 			//zero means not found
+			c.db.Create(&v)
 		}
 	}
 
