@@ -12,11 +12,16 @@ func ProductControllerDef(router *gin.Engine, cfg *config.Config) {
 	//Use JWT verification middleware
 
 	product := router.Group("/product")
+	//create MW 
+	adminMW := jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute)
 
-	// product.POST("/",  CreateProduct)
-	product.POST("/", jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute), CreateProduct)
-	product.POST("/bulk", jwtUtils.JWTAdminMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute), CreateBulkProduct)
+
 	product.GET("/", GetAllProductWithPagination)
+	product.POST("/", adminMW, CreateProduct)
+	product.POST("/bulk", adminMW, CreateBulkProduct)
 	product.POST("/search", Search)
-	
+	product.DELETE("/:id", adminMW, Delete)
+	product.PATCH("/:id", adminMW, Update)
+
+
 }

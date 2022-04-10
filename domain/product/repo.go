@@ -32,7 +32,6 @@ func (c *ProductRepository) Migrations() {
 	//https://gorm.io/docs/migration.html#Auto-Migration
 }
 
-
 //Create single product
 func (c *ProductRepository) Create(product Product) error {
 	result := c.db.Create(&product)
@@ -74,22 +73,21 @@ func (c *ProductRepository) GetAllWithPagination(page, pageSize string) (Product
 }
 
 //return all products with relations
-func (c *ProductRepository) SearchProducts( searchText,page, pageSize  string) (Products, error) {
-
+func (c *ProductRepository) SearchProducts(searchText, page, pageSize string) (Products, error) {
 
 	//https://www.compose.com/articles/mastering-postgresql-tools-full-text-search-and-phrase-search/
 	var products Products
-	
+
 	result := c.db.
-	Where("product_name LIKE ?", "%"+searchText+"%").
-	Or("products.description LIKE ?", "%"+searchText+"%").
-	Or("color LIKE ?", "%"+searchText+"%").
-	Or("sku LIKE ?", "%"+searchText+"%").
-	//hardcoded store name search :/
-	Or(" \"Store\".\"name\" LIKE ?", "%"+searchText+"%").
-	Or("\"Category\".\"category_name\" LIKE ?", "%"+searchText+"%").
-	Scopes(domain.Paginate(page, pageSize)).
-	Joins("Store").Joins("Category").Find(&products).Limit(10)
+		Where("product_name LIKE ?", "%"+searchText+"%").
+		Or("products.description LIKE ?", "%"+searchText+"%").
+		Or("color LIKE ?", "%"+searchText+"%").
+		Or("sku LIKE ?", "%"+searchText+"%").
+		//hardcoded store name search :/
+		Or(" \"Store\".\"name\" LIKE ?", "%"+searchText+"%").
+		Or("\"Category\".\"category_name\" LIKE ?", "%"+searchText+"%").
+		Scopes(domain.Paginate(page, pageSize)).
+		Joins("Store").Joins("Category").Find(&products).Limit(10)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -99,7 +97,7 @@ func (c *ProductRepository) SearchProducts( searchText,page, pageSize  string) (
 
 }
 
-//create product 
+//create product
 func (c *ProductRepository) CreateBulkProduct(products Products) {
 	//categoryName is uniq
 
@@ -113,4 +111,55 @@ func (c *ProductRepository) CreateBulkProduct(products Products) {
 		}
 	}
 
+}
+
+//delete product by id
+func (c *ProductRepository) Delete(id string) (Product, error) {
+	var product Product
+	result := c.db.Where("id = ?", id).First(&product)
+
+	if result.Error != nil {
+		return product, result.Error
+	}
+
+	result = c.db.Delete(&product)
+
+	if result.Error != nil {
+		return product, result.Error
+	}
+
+	return product, nil
+}
+
+//PATCH Product
+func (c *ProductRepository) Update(id string, patched Product) (*Product, error) {
+
+	var old Product
+	//get the first product if exist
+	result := c.db.Where("id = ?", id).First(&old)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	//patch the produc
+
+	c.db.Model(&old).Updates(patched).Where("id = ?", id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &old, nil
+}
+
+//Get single product by id
+func (c *ProductRepository) GetById(id string) (Product, error) {
+	var product Product
+	result := c.db.Where("id = ?", id).First(&product)
+
+	if result.Error != nil {
+		return product, result.Error
+	}
+
+	return product, nil
 }
