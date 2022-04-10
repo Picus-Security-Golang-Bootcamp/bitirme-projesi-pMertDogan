@@ -5,18 +5,22 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v4"
+	"go.uber.org/zap"
 )
 
 //Our token struct
 // Reserved claims: https://tools.ietf.org/html/rfc7519#section-4.1
 // iss (issuer), *exp (expiration time), sub (subject), aud (audience)
 type DecodedJWTToken struct {
-	UserId         string `json:"userId"`
-	Email          string `json:"email"`
-	Iat            int    `json:"iat"` //issued at  *optional
-	Exp            int64  `json:"exp"` //expiration time *Must be used
-	IsAdmin        bool   `json:"isAdmin"`
-	IsItAccesToken bool   `json:"isItAccesToken"`
+	//jsonString: {\"email\":\"pme763@pm.me\",\"exp\":1649622705,\"iat\":1649622105,\"isAdmin\":false,\"isItAccesToken\":true,\"userId\":2}"}
+	//\"userId\":2 is decoded as int so we need use it as int not string
+	//its selected on login jwt creation step dbUser.ID is int
+	UserId         int `json:"userId,required"`
+	Email          string `json:"email,required"`
+	Iat            int    `json:"iat,required"` //issued at  *optional
+	Exp            int64  `json:"exp,required"` //expiration time *Must be used
+	IsAdmin        bool   `json:"isAdmin,required"`
+	IsItAccesToken bool   `json:"isItAccesToken,required"`
 	// Iss    string   `json:"iss"`
 }
 
@@ -62,12 +66,12 @@ func VerifyDecodeToken(token string, secret string) (*DecodedJWTToken, error) {
 		}
 	}
 
-
-	decodedClaims := decoded.Claims.(jwt.MapClaims)
-
 	var decodedToken DecodedJWTToken
+	zap.L().Sugar().Info("Decoded token: ", decoded)
+	decodedClaims := decoded.Claims.(jwt.MapClaims)
 	jsonString, _ := json.Marshal(decodedClaims)
+	zap.L().Sugar().Info("jsonString: ", string(jsonString))
 	json.Unmarshal(jsonString, &decodedToken)
-
+	zap.L().Sugar().Info("decodedToken: ", decodedToken)
 	return &decodedToken, nil
 }

@@ -22,12 +22,12 @@ bilgi de dogruyse JWT token olusturup kullaniciya donmelisiniz.
 bir kategori yaratmali
 4. List Category
 - Veri tabaninda aktif ve silinmemis olan tum kategoriler listelenmeli
-5. AddToCart
+5. AddToBasket
 - Sisteme giris yapmis ve Token suresi gecmemis kullanicilar urunlerini sepete
 ekleyebilir
-6. List Cart Items
+6. List Basket Items
 - Kullanicilar sepetine ekledigi urunleri listeleyebilir
-7. Update/Delete Cart Items
+7. Update/Delete Basket Items
 - Kullanicilar sepetine ekledigi urunlerin adetini guncelleyebilir ya da urunu
 sepetten cikarabilir
 8. Complete Order

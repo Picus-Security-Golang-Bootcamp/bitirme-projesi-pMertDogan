@@ -9,23 +9,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/database"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/basket"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/category"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/check"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/store"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/user"
-	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
+	appAuth "github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/auth"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/config"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/graceful"
 	logger "github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/pkg/logging"
 	"go.uber.org/zap"
 )
 
-
-
 func main() {
-
-	
 
 	//Load Config with depency injection
 	cfg, err := config.LoadConfig("config-local")
@@ -43,7 +40,6 @@ func main() {
 		zap.L().Fatal("cannot connect to database")
 	}
 
-
 	//Init Gin
 	router := gin.Default()
 	//init Repos
@@ -51,20 +47,23 @@ func main() {
 	user.UserRepoInit(db)
 	product.ProductRepoInit(db)
 	store.StoreRepoInit(db)
+	basket.BasketRepoInit(db)
 	//Migrate Structure
 	category.Repo().Migrations()
 	user.Repo().Migrations()
 	product.Repo().Migrations()
 	// store.Repo().Migrations()
+	basket.Repo().Migrations()
 
 	//Create Admin , Store etc
 	domain.InitDBDefaults(cfg)
 
 	//Init Routes
-	category.CategoryControllerDef(router,cfg)
+	category.CategoryControllerDef(router, cfg)
 	check.CheckControllerDef(router)
-	appAuth.AuthHandler(router,cfg)
-	product.ProductControllerDef(router,cfg)
+	appAuth.AuthHandler(router, cfg)
+	product.ProductControllerDef(router, cfg)
+	basket.BasketControllerDef(router, cfg)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.ServerConfig.Port),
@@ -83,7 +82,7 @@ func main() {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-	
+
 	log.Println("Basket Service started")
 	graceful.ShutdownGin(srv, time.Duration(cfg.ServerConfig.TimeoutSecs*int64(time.Second)))
 }

@@ -20,8 +20,8 @@ func (a *authHandler) login(c *gin.Context) {
 		res.ResponseCode = http.StatusBadRequest
 		c.JSON(http.StatusBadRequest, res)
 	}
-	//Verify is user exist with the same hash
-	user, err := user.Repo().CheckIsUserExistWithThisEmail(req.Email)
+	//Verify is dbUser exist with the same hash
+	dbUser, err := user.Repo().CheckIsUserExistWithThisEmail(req.Email)
 
 	if err != nil {
 		res.ErrMsg = "Something went wrong. Please try again later."
@@ -30,7 +30,7 @@ func (a *authHandler) login(c *gin.Context) {
 		return
 	}
 
-	if user == nil {
+	if dbUser == nil {
 		res.ErrMsg = "This email is not registered."
 		res.ResponseCode = http.StatusBadRequest
 		c.JSON(http.StatusBadRequest, res)
@@ -38,7 +38,7 @@ func (a *authHandler) login(c *gin.Context) {
 	}
 
 	//Verify is password correct
-	isItCorrect := customCrypto.CheckPasswordHash(req.Password, user.Password)
+	isItCorrect := customCrypto.CheckPasswordHash(req.Password, dbUser.Password)
 
 	//if password is not correct return error
 	if !isItCorrect {
@@ -50,32 +50,41 @@ func (a *authHandler) login(c *gin.Context) {
 
 	//create JWT claims
 	jwtClaimsAccess := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": user.ID,
-		"email":  user.Email,
+		"userId": dbUser.ID,
+		"email":  dbUser.Email,
 		"iat":    time.Now().Unix(), //issued at current time
 		// "iss":    os.Getenv("ENV"),
 		"exp":            time.Now().Add(time.Duration(a.cfg.JWTConfig.AccesTokenLifeMinute) * time.Minute).Unix(), //expiration time is one hour
-		"isAdmin":        user.IsAdmin,
+		"isAdmin":        dbUser.IsAdmin,
 		"isItAccesToken": true,
 	})
 
 	//generate JWT refresh token
 	jwtClaimsRefresh := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": user.ID,
-		"email":  user.Email,
+		"userId": dbUser.ID,
+		"email":  dbUser.Email,
 		"iat":    time.Now().Unix(), //issued at current time
 		// "iss":    os.Getenv("ENV"),
 		"exp":            time.Now().Add(time.Duration(a.cfg.JWTConfig.RefreshTokenLifeMinute) * time.Hour).Unix(), //expiration time is one hour
-		"isAdmin":        user.IsAdmin,
+		"isAdmin":        dbUser.IsAdmin,
 		"isItAccesToken": false,
 	})
 
 	//create JWT token
+	// var userToResponse user.UserToReponseDTO
+	// userToResponse.ID = user.ID
+	// userToResponse.Email = user.Email
+	// userToResponse.Name = user.UserName
 
 	accesToken := jwtUtils.GenerateToken(jwtClaimsAccess, a.cfg.JWTConfig.SecretKey)
 	refreshToken := jwtUtils.GenerateToken(jwtClaimsRefresh, a.cfg.JWTConfig.SecretKey)
 	res.AccesToken = accesToken
 	res.RefreshToken = refreshToken
 	res.ResponseCode = http.StatusOK
+	res.UserData = user.UserToReponseDTO{
+		ID:       int(dbUser.ID),
+		Name:     dbUser.UserName,
+		Email:    dbUser.Email,
+	}
 	c.JSON(http.StatusOK, res)
 }
