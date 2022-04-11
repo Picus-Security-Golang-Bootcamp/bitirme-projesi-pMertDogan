@@ -87,7 +87,7 @@ func (c *BasketRepository) CreateOrUpdateBasket(userID, productID, totalQuantity
 	if result.RowsAffected > 0 {
 		//update quantity
 		result = c.db.Model(&Basket{}).Where("user_id = ? AND product_id = ?", userID, productID).
-		Update("total_quantity", basket.TotalQuantity+totalQuantity)
+			Update("total_quantity", basket.TotalQuantity+totalQuantity)
 	} else {
 		//if product is not in basket
 		result = c.db.Create(&Basket{UserID: userID, ProductID: productID, TotalQuantity: totalQuantity})
@@ -102,7 +102,7 @@ func (c *BasketRepository) CreateOrUpdateBasket(userID, productID, totalQuantity
 }
 
 //Get baskets by user id include product and user
-func (c *BasketRepository) GetBasketsByUserID(userID int) (BasketSToResponseDTO, error) {
+func (c *BasketRepository) GetBasketsByUserID(userID int, page, pageSize string) (BasketSToResponseDTO, error) {
 	var basket BasketSToResponseDTO
 	var result *gorm.DB
 	// result = c.db.Joins("Product").Where("user_id = ?", userID).Find(&basket)
@@ -131,8 +131,10 @@ func (c *BasketRepository) GetBasketsByUserID(userID int) (BasketSToResponseDTO,
 FROM baskets
 Join products ON products.id = baskets.product_id
 WHERE user_id = ?
-`, userID).Scan(&basket)
-// and baskets.deleted_at is null can be added to filter deleted baskets
+limit ?
+offset ?
+`,userID,pageSize,page).Scan(&basket)
+	// and baskets.deleted_at is null can be added to filter deleted baskets
 
 	/*
 
@@ -195,7 +197,7 @@ func (c *BasketRepository) GetBasketByUserIDAndID(userID, id int) (*Basket, erro
 }
 
 //Update basket quantity
-func (c *BasketRepository) UpdateBasketQuantity(userID, totalQuantity,id int) error {
+func (c *BasketRepository) UpdateBasketQuantity(userID, totalQuantity, id int) error {
 	var result *gorm.DB
 	result = c.db.Model(&Basket{}).Where("user_id = ? AND id = ?", userID, id).Update("total_quantity", totalQuantity)
 

@@ -57,11 +57,13 @@ func DeleteBasket(c *gin.Context) {
 		return
 	}
 
-	baskets ,err := Repo().GetBasketsByUserID(userIDInt)
+	baskets ,err := Repo().GetBasketsByUserID(userIDInt,"0","50")
 
 	//return success
 	response.ResponseCode = http.StatusOK
 	response.Data = baskets
+	response.PageNo = "0"
+	response.PageSize = "50"
 	c.JSON(http.StatusOK, response)
 
 }

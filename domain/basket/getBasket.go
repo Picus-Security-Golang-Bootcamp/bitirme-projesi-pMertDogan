@@ -12,8 +12,14 @@ func GetBasket(c *gin.Context) {
 
 	response := domain.ResponseModel{}
 
+
 	//get userID from url
 	userID := c.Param("id")
+
+	//get page from url
+	page := c.DefaultQuery("page","1")
+	//get pageSize from url
+	pageSize := c.DefaultQuery("pageSize","50")
 
 	//checked on MW side but we can add addtionale check here
 	if userID == "" {
@@ -35,7 +41,7 @@ func GetBasket(c *gin.Context) {
 	}
 
 	//add to Basket
-	v,err := Repo().GetBasketsByUserID(userIDInt)
+	v,err := Repo().GetBasketsByUserID(userIDInt,page,pageSize)
 
 	if err != nil {
 		response.ErrMsg = "error getting basket"
@@ -47,6 +53,8 @@ func GetBasket(c *gin.Context) {
 	//return success
 	response.ResponseCode = http.StatusOK
 	response.Data = v
+	response.PageNo = page
+	response.PageSize = pageSize
 	c.JSON(http.StatusOK, response)
 
 }
