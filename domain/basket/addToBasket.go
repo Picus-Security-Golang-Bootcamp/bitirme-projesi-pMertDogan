@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 )
 
 func AddToBasket(c *gin.Context) {
@@ -42,6 +43,25 @@ func AddToBasket(c *gin.Context) {
 		return
 	}
 
+	//check if product has enought stock
+	productQuantity, err := product.Repo().GetProductQuantityById(req.ProductID)
+
+	if err != nil {
+		response.ResponseCode = http.StatusBadRequest
+		response.ErrMsg = "product not found"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if productQuantity < req.TotalQuantity {
+		response.ResponseCode = http.StatusBadRequest
+		response.ErrMsg = "not enought stock"
+		response.ErrDsc = "product quantity is " + strconv.Itoa(productQuantity)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+
 	//add to Basket
 	err = Repo().CreateBasket(userIDInt, req.ProductID, req.TotalQuantity)
 
@@ -58,5 +78,7 @@ func AddToBasket(c *gin.Context) {
 	response.ResponseCode = http.StatusOK
 	response.Data = v
 	c.JSON(http.StatusOK, response)
+
+
 
 }

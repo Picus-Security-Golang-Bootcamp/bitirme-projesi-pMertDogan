@@ -167,3 +167,15 @@ func (c *ProductRepository) GetById(id string) (Product, error) {
 
 	return product, nil
 }
+
+//return product quantity by id
+func (c *ProductRepository) GetProductQuantityById(id int) (int, error) {
+	var product Product
+	result := c.db.Where("id = ?", id).First(&product)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return product.StockCount, nil
+}

@@ -65,7 +65,7 @@ func (a *authHandler) login(c *gin.Context) {
 		"email":  dbUser.Email,
 		"iat":    time.Now().Unix(), //issued at current time
 		// "iss":    os.Getenv("ENV"),
-		"exp":            time.Now().Add(time.Duration(a.cfg.JWTConfig.RefreshTokenLifeMinute) * time.Hour).Unix(), //expiration time is one hour
+		"exp":            time.Now().Add(time.Duration(a.cfg.JWTConfig.RefreshTokenLifeMinute) * time.Minute).Unix(), //expiration time is one hour
 		"isAdmin":        dbUser.IsAdmin,
 		"isItAccesToken": false,
 	})
