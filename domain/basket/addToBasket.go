@@ -9,6 +9,7 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 )
 
+// AddToBasket adds product to basket
 func AddToBasket(c *gin.Context) {
 
 	response := domain.ResponseModel{}
@@ -53,7 +54,17 @@ func AddToBasket(c *gin.Context) {
 		return
 	}
 
-	if productQuantity < req.TotalQuantity {
+	//get basket by quantity if exist
+	basket, _ := Repo().GetBasketByUserIDAndProductID(userIDInt, req.ProductID)
+
+	total := req.TotalQuantity
+	if basket != nil {
+		total += basket.TotalQuantity
+	}
+
+	//or we can we can define max allowed quantity = 10
+	// if productQuantity < 10+basket.TotalQuantity {
+	if productQuantity < total {
 		response.ResponseCode = http.StatusBadRequest
 		response.ErrMsg = "not enought stock"
 		response.ErrDsc = "product quantity is " + strconv.Itoa(productQuantity)
@@ -62,8 +73,8 @@ func AddToBasket(c *gin.Context) {
 	}
 
 
-	//add to Basket
-	err = Repo().CreateBasket(userIDInt, req.ProductID, req.TotalQuantity)
+	//add to Basket or create new one
+	err = Repo().CreateOrUpdateBasket(userIDInt, req.ProductID, req.TotalQuantity)
 
 	if err != nil {
 		response.ResponseCode = http.StatusBadRequest
@@ -73,6 +84,7 @@ func AddToBasket(c *gin.Context) {
 		return
 	}
 
+	
 	v , err := Repo().GetBasketsByUserID(userIDInt)
 	//return success
 	response.ResponseCode = http.StatusOK

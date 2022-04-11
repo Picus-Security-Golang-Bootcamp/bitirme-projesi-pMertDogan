@@ -78,9 +78,20 @@ func (c *BasketRepository) GetAllBasketsWithPagination(page, pageSize string) (B
 }
 
 //add items to Basket table
-func (c *BasketRepository) CreateBasket(userID, productID, totalQuantity int) error {
+func (c *BasketRepository) CreateOrUpdateBasket(userID, productID, totalQuantity int) error {
 	var result *gorm.DB
-	result = c.db.Create(&Basket{UserID: userID, ProductID: productID, TotalQuantity: totalQuantity})
+	//check if product is already in basket
+	var basket Basket
+	result = c.db.Where("user_id = ? AND product_id = ?", userID, productID).First(&basket)
+	//if product is already in basket
+	if result.RowsAffected > 0 {
+		//update quantity
+		result = c.db.Model(&Basket{}).Where("user_id = ? AND product_id = ?", userID, productID).
+		Update("total_quantity", basket.TotalQuantity+totalQuantity)
+	} else {
+		//if product is not in basket
+		result = c.db.Create(&Basket{UserID: userID, ProductID: productID, TotalQuantity: totalQuantity})
+	}
 
 	if result.Error != nil {
 		return result.Error
@@ -103,6 +114,9 @@ func (c *BasketRepository) GetBasketsByUserID(userID int) (BasketSToResponseDTO,
 	result = c.db.Raw(`
 	SELECT 
 	baskets.id,
+	baskets.created_at,
+	baskets.updated_at,
+	baskets.deleted_at,
 	baskets.user_id,
 	baskets.total_quantity,
 	baskets.product_id,
@@ -116,7 +130,9 @@ func (c *BasketRepository) GetBasketsByUserID(userID int) (BasketSToResponseDTO,
 	products.store_id
 FROM baskets
 Join products ON products.id = baskets.product_id
-WHERE user_id = ?`, userID).Scan(&basket)
+WHERE user_id = ?
+`, userID).Scan(&basket)
+// and baskets.deleted_at is null can be added to filter deleted baskets
 
 	/*
 
@@ -165,16 +181,16 @@ WHERE user_id = ?`, userID).Scan(&basket)
 }
 
 //get basket by userid and id
-func (c *BasketRepository) GetBasketByUserIDAndID(userID, id int) (Basket, error) {
+func (c *BasketRepository) GetBasketByUserIDAndID(userID, id int) (*Basket, error) {
 	var basket Basket
 	var result *gorm.DB
 	result = c.db.Where("user_id = ? AND id = ?", userID, id).First(&basket)
 
 	if result.Error != nil {
-		return basket, result.Error
+		return nil, result.Error
 	}
 
-	return basket, nil
+	return &basket, nil
 
 }
 
@@ -201,5 +217,19 @@ func (c *BasketRepository) RemoveBasketByUserIDBasketID(userID, basketID int) er
 	}
 
 	return nil
+
+}
+
+//get basket by user id and product id
+func (c *BasketRepository) GetBasketByUserIDAndProductID(userID, productID int) (*Basket, error) {
+	var basket Basket
+	var result *gorm.DB
+	result = c.db.Where("user_id = ? AND product_id = ?", userID, productID).First(&basket)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &basket, nil
 
 }

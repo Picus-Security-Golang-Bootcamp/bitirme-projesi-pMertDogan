@@ -179,3 +179,5 @@ func (c *ProductRepository) GetProductQuantityById(id int) (int, error) {
 
 	return product.StockCount, nil
 }
+
+

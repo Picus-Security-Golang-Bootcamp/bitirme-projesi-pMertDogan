@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 )
 
 func UpdateBasket(c *gin.Context) {
@@ -43,11 +44,9 @@ func UpdateBasket(c *gin.Context) {
 		return
 	}
 
-
-
 	//Check if basketID is valid
-	_,err = Repo().GetBasketByUserIDAndID(userIDInt,req.BasketID)
-	
+	oldBasket, err := Repo().GetBasketByUserIDAndID(userIDInt, req.BasketID)
+
 	if err != nil {
 		response.ErrMsg = "Basket not found"
 		response.ResponseCode = http.StatusBadRequest
@@ -63,8 +62,26 @@ func UpdateBasket(c *gin.Context) {
 		return
 	}
 
+	productQuantity, err := product.Repo().GetProductQuantityById(oldBasket.ProductID)
+
+	if err != nil {
+		response.ResponseCode = http.StatusBadRequest
+		response.ErrMsg = "product not found"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	//check if product has enought stock
+	if productQuantity < req.TotalQuantity {
+		response.ResponseCode = http.StatusBadRequest
+		response.ErrMsg = "not enought stock"
+		response.ErrDsc = "product quantity is " + strconv.Itoa(productQuantity)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	//update basket
-	err = Repo().UpdateBasketQuantity(userIDInt,req.TotalQuantity,req.BasketID)
+	err = Repo().UpdateBasketQuantity(userIDInt, req.TotalQuantity, req.BasketID)
 
 	if err != nil {
 		response.ErrMsg = "Error updating basket"
@@ -73,7 +90,7 @@ func UpdateBasket(c *gin.Context) {
 		return
 	}
 
-	baskets ,err := Repo().GetBasketsByUserID(userIDInt)
+	baskets, err := Repo().GetBasketsByUserID(userIDInt)
 
 	//return success
 	response.ResponseCode = http.StatusOK
