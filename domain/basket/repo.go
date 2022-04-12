@@ -102,7 +102,44 @@ func (c *BasketRepository) CreateOrUpdateBasket(userID, productID, totalQuantity
 }
 
 //Get baskets by user id include product and user
-func (c *BasketRepository) GetBasketsByUserID(userID int, page, pageSize string) (BasketSToResponseDTO, error) {
+func (c *BasketRepository) GetBasketsByUserID(userID int) (BasketSToResponseDTO, error) {
+	var basket BasketSToResponseDTO
+	var result *gorm.DB
+	result = c.db.Raw(`
+	SELECT 
+	baskets.id,
+	baskets.created_at,
+	baskets.updated_at,
+	baskets.deleted_at,
+	baskets.user_id,
+	baskets.total_quantity,
+	baskets.product_id,
+	products.sku,
+	products.product_name,
+	products.description,
+	products.color,
+	products.price,
+	products.stock_count,
+	products.category_id,
+	products.store_id
+FROM baskets
+Join products ON products.id = baskets.product_id
+WHERE user_id = ?
+and baskets.deleted_at is null
+`, userID).Scan(&basket)
+	// and baskets.deleted_at is null can be added to filter deleted baskets
+
+	zap.L().Debug(result.Statement.SQL.String())
+	if result.Error != nil {
+		return basket, result.Error
+	}
+
+	return basket, nil
+
+}
+
+//Get baskets by user id include product and user
+func (c *BasketRepository) GetBasketsByUserIDWithPaginations(userID int, page, pageSize string) (BasketSToResponseDTO, error) {
 	var basket BasketSToResponseDTO
 	var result *gorm.DB
 	// result = c.db.Joins("Product").Where("user_id = ?", userID).Find(&basket)
@@ -133,7 +170,7 @@ Join products ON products.id = baskets.product_id
 WHERE user_id = ?
 limit ?
 offset ?
-`,userID,pageSize,page).Scan(&basket)
+`, userID, pageSize, page).Scan(&basket)
 	// and baskets.deleted_at is null can be added to filter deleted baskets
 
 	/*
@@ -193,6 +230,19 @@ func (c *BasketRepository) GetBasketByUserIDAndID(userID, id int) (*Basket, erro
 	}
 
 	return &basket, nil
+}
+
+//get baskets by userid and id
+func (c *BasketRepository) GetBasketsByUserIDAndBasketIDs(id []int) (Baskets, error) {
+	var baskets Baskets
+	// SELECT * FROM baskets WHERE id IN (...id);
+	result := c.db.Where(id).Joins("Product").Joins("User").Find(&baskets)
+
+	if result.Error != nil {
+		return baskets, result.Error
+	}
+
+	return baskets, nil
 
 }
 

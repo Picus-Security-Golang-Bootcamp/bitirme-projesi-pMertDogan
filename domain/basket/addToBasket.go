@@ -85,7 +85,7 @@ func AddToBasket(c *gin.Context) {
 	}
 
 
-	v , err := Repo().GetBasketsByUserID(userIDInt,"0","50")
+	v , err := Repo().GetBasketsByUserIDWithPaginations(userIDInt,"0","50")
 	//return success
 	response.ResponseCode = http.StatusOK
 	response.Data = v

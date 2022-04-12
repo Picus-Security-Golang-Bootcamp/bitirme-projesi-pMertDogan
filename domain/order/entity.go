@@ -4,6 +4,9 @@ package order
 import (
 	"encoding/json"
 	"gorm.io/gorm"
+	//https://github.com/go-gorm/datatypes
+	"gorm.io/datatypes"
+
 )
 
 type Orders []Order
@@ -11,11 +14,12 @@ type Orders []Order
 type Order struct {
 	gorm.Model
 	UserID int
-	ProductID int
+	 ProductID int
+	ProductSnapshot datatypes.JSON //We can store snapshot of product as JSON
 	Comment string
 	ShippingAdress string
 	BillingAddress string
-	quantity int
+	Quantity int
 }
 
 // fromJson Order

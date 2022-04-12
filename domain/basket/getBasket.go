@@ -41,7 +41,7 @@ func GetBasket(c *gin.Context) {
 	}
 
 	//add to Basket
-	v,err := Repo().GetBasketsByUserID(userIDInt,page,pageSize)
+	v,err := Repo().GetBasketsByUserIDWithPaginations(userIDInt,page,pageSize)
 
 	if err != nil {
 		response.ErrMsg = "error getting basket"

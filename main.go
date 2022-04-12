@@ -12,6 +12,7 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/basket"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/category"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/check"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/order"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/store"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/user"
@@ -48,12 +49,14 @@ func main() {
 	product.ProductRepoInit(db)
 	store.StoreRepoInit(db)
 	basket.BasketRepoInit(db)
+	order.OrderRepoInit(db)
 	//Migrate Structure
 	category.Repo().Migrations()
 	user.Repo().Migrations()
 	product.Repo().Migrations()
 	// store.Repo().Migrations()
 	basket.Repo().Migrations()
+	order.Repo().Migrations()
 
 	//Create Admin , Store etc
 	domain.InitDBDefaults(cfg)
@@ -64,6 +67,8 @@ func main() {
 	appAuth.AuthHandler(router, cfg)
 	product.ProductControllerDef(router, cfg)
 	basket.BasketControllerDef(router, cfg)
+	order.OrderControllerDef(router, cfg)
+	
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.ServerConfig.Port),

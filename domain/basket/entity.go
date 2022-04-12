@@ -38,3 +38,14 @@ func (r *Baskets) Marshal() ([]byte, error) {
 func (r *Basket) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
+
+
+//return baskets items basketIDs as int array
+func (r *Baskets) GenerateProductIDTotalQuantityMap()  map[int]int{
+	//create basket map key is product ID and value is totalQuantity
+	basketMap := make(map[int]int)
+	for _, basket := range *r {
+		basketMap[basket.ProductID] = basket.TotalQuantity
+	}
+	return  basketMap
+} 
