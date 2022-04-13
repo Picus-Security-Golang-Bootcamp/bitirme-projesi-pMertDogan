@@ -104,7 +104,7 @@ func (c *CategoryRepository) GetAllCategoriesWithLimit(limit int) (Categorys, er
 
 }
 
-func (c *CategoryRepository) GetAllCategoriesWithPagination(page, pageSize string) (Categorys, error) {
+func (c *CategoryRepository) GetAllCategoriesWithPagination(page, pageSize int) (Categorys, error) {
 
 	var categories Categorys
 	//resturn paginated data

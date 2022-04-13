@@ -42,7 +42,7 @@ func CreateBulkProduct(c *gin.Context) {
 		
 		Repo().CreateBulkProduct(csvProducts)
 
-		v, err := Repo().GetAllWithPagination("1", "100")
+		v, err := Repo().GetAllWithPagination(1, 100)
 		if err != nil {
 			zap.L().Error("error getting all categories", zap.Error(err))
 			response.ResponseCode = http.StatusInternalServerError

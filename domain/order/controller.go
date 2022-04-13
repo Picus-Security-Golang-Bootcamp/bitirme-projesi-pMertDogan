@@ -16,4 +16,5 @@ func OrderControllerDef(router *gin.Engine, cfg *config.Config) {
 	order.Use(jwtUtils.JWTUserIDMiddleware(cfg.JWTConfig.SecretKey, cfg.JWTConfig.AccesTokenLifeMinute))
     
 	order.POST("/", CompleteOrder)
+	order.GET("/", GetOrders)
 }

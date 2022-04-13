@@ -57,7 +57,7 @@ func (c *ProductRepository) GetBySkuWithRelations(sku string) (Product, error) {
 }
 
 //return all products with relations
-func (c *ProductRepository) GetAllWithPagination(page, pageSize string) (Products, error) {
+func (c *ProductRepository) GetAllWithPagination(page, pageSize int) (Products, error) {
 
 	var products Products
 	// product := Product
@@ -73,7 +73,7 @@ func (c *ProductRepository) GetAllWithPagination(page, pageSize string) (Product
 }
 
 //return all products with relations
-func (c *ProductRepository) SearchProducts(searchText, page, pageSize string) (Products, error) {
+func (c *ProductRepository) SearchProducts(searchText string, page, pageSize int) (Products, error) {
 
 	//https://www.compose.com/articles/mastering-postgresql-tools-full-text-search-and-phrase-search/
 	var products Products

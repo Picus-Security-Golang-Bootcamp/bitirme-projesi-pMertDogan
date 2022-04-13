@@ -1,4 +1,4 @@
-package category
+package order
 
 import (
 	"net/http"
@@ -6,14 +6,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
+	"go.uber.org/zap"
 )
 
-func GetAllCategoriesWithPagination(c *gin.Context) {
-
+//Get customer orders with pagination
+func GetOrders(c *gin.Context) {
+	//init response model
 	response := domain.ResponseModel{}
-	//get query params
+
+	//get userID from Param
+	id := c.Param("id")
 	pageSize := c.DefaultQuery("pageSize", "10")
 	pageNo := c.DefaultQuery("pageNo", "1")
+	zap.L().Debug("ID is", zap.String("id", id))
 
 	//convert pageSize to int
 	pageSizeInt, err := strconv.Atoi(pageSize)
@@ -35,29 +40,24 @@ func GetAllCategoriesWithPagination(c *gin.Context) {
 		return
 	}
 
-	//get all categories with pagination
-	v, err := Repo().GetAllCategoriesWithPagination(pageNoInt, pageSizeInt)
 
+	//convert id to int
+	userID, err := strconv.Atoi(id)
 	if err != nil {
-		response.ResponseCode = http.StatusInternalServerError
-		response.ErrMsg = "error getting  categories with pagination"
-		c.JSON(http.StatusInternalServerError, response)
-		return
-	}
-	//No data found
-	if len(v) == 0 {
-		response.ResponseCode = http.StatusNotFound
-		response.ErrMsg = "no data found"
-		c.JSON(http.StatusNotFound, response)
+		response.ErrMsg = "Cannot convert id to int"
+		response.ErrDsc = err.Error()
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
+	//get orders from userID
+	orders, err := Repo().GetOrders(userID,pageNoInt,pageSizeInt)
+
+
+
+	
+	//return succes as response
+	response.Data = orders
 	response.ResponseCode = http.StatusOK
-	response.Data = v
-	response.PageNo = pageNo
-	response.PageSize = pageSize
 	c.JSON(http.StatusOK, response)
-
 }
-
-

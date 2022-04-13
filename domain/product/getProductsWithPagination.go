@@ -2,6 +2,7 @@ package product
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
@@ -14,10 +15,27 @@ func GetAllProductWithPagination(c *gin.Context) {
 	pageSize := c.DefaultQuery("pageSize", "10")
 	pageNo := c.DefaultQuery("pageNo", "1")
 
-	
+	pageSizeInt, err := strconv.Atoi(pageSize)
+	if err != nil {
+		//verify sended one is int
+		response.ErrMsg = "Cannot convert pageSize to int"
+		response.ErrDsc = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	//convert pageNo to int
+	pageNoInt, err := strconv.Atoi(pageNo)
+	if err != nil {
+		//verify sended one is int
+		response.ErrMsg = "Cannot convert pageNo to int"
+		response.ErrDsc = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	//get all categories with pagination
-	v, err := Repo().GetAllWithPagination(pageNo, pageSize)
+	v, err := Repo().GetAllWithPagination(pageNoInt, pageSizeInt)
 	
 	if err != nil {
 		response.ResponseCode = http.StatusInternalServerError

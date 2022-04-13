@@ -1,21 +1,22 @@
 package domain
 
 import (
-	"strconv"
 
 	"gorm.io/gorm"
 )
 
 //Global paginate calculation
-func Paginate(page, pageSize string) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
+func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) (*gorm.DB) {
 
-		page, _ := strconv.Atoi(page)
+		
+		// page ,_:= strconv.Atoi(page)
 		if page == 0 {
 			page = 1
 		}
 
-		pageSize, _ := strconv.Atoi(pageSize)
+
+		// pageSize, _ := strconv.Atoi(pageSize)
 		if page == 0 {
 			page = 1
 		}

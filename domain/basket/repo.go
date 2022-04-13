@@ -63,7 +63,7 @@ func (c *BasketRepository) GetAllBasketsWithLimit(limit int) (Baskets, error) {
 
 }
 
-func (c *BasketRepository) GetAllBasketsWithPagination(page, pageSize string) (Baskets, error) {
+func (c *BasketRepository) GetAllBasketsWithPagination(page, pageSize int) (Baskets, error) {
 
 	var Baskets Baskets
 	//resturn paginated data

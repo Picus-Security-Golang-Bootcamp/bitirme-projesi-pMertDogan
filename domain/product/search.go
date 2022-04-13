@@ -12,14 +12,32 @@ import (
 func Search(c *gin.Context) {
 	//Json
 	c.Header("Content-Type", "application/json")
-
+	var responseModel domain.ResponseModel
 	//get query params
 		//get query params
 		pageSize := c.DefaultQuery("pageSize", "10")
-		page := c.DefaultQuery("page", "1")
+		pageNo := c.DefaultQuery("page", "1")
 	
+		pageSizeInt, err := strconv.Atoi(pageSize)
+		if err != nil {
+			//verify sended one is int
+			responseModel.ErrMsg = "Cannot convert pageSize to int"
+			responseModel.ErrDsc = err.Error()
+			c.JSON(http.StatusBadRequest, responseModel)
+			return
+		}
+	
+		//convert pageNo to int
+		pageNoInt, err := strconv.Atoi(pageNo)
+		if err != nil {
+			//verify sended one is int
+			responseModel.ErrMsg = "Cannot convert pageNo to int"
+			responseModel.ErrDsc = err.Error()
+			c.JSON(http.StatusBadRequest, responseModel)
+			return
+		}
 
-	var responseModel domain.ResponseModel
+	
 
 	//get query params
 	searchText := c.Query("search")
@@ -32,7 +50,7 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	v, err := Repo().SearchProducts(searchText,page,pageSize)
+	v, err := Repo().SearchProducts(searchText,pageNoInt,pageSizeInt)
 
 	if err != nil {
 		responseModel.ErrMsg = "error getting products"

@@ -5,6 +5,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/basket"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain/product"
 	"github.com/pkg/errors"
@@ -148,4 +149,16 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 	
 	//end transaction
 	return tx.Commit().Error
+}
+
+//get orders of customer with pagination
+func (c *OrderRepository) GetOrders(userID int,page , pageSize int) (Orders, error) {
+	var orders Orders
+	result := c.db.Where("user_id = ?", userID).
+	Scopes(domain.Paginate(page, pageSize)).
+	Find(&orders)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return orders, nil
 }
