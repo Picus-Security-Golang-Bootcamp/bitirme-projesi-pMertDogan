@@ -19,13 +19,13 @@ type CompleteOrderDTO struct {
 }
 
 
-//check provided BacketIDs are valid or not
+//check provided BasketIDs are valid or not
 func (dto CompleteOrderDTO) ValideteBasketIDs(userID int) error {
 	
 	//Get all basket items for user without pagination
 	//We dont added basket limit so if user has many basket items we will get all of them and its add extra load to server
 	verifiedBaskets, err := basket.Repo().GetBasketsByUserID(userID)
-	zap.L().Info("verifiedBaskets", zap.Any("verifiedBaskets are ", verifiedBaskets))
+	zap.L().Debug("verifiedBaskets", zap.Any("verifiedBaskets are ", verifiedBaskets))
 	if err != nil {
 		return  err
 	}

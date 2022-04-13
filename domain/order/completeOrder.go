@@ -17,7 +17,7 @@ func CompleteOrder(c *gin.Context) {
 	//get userID from Param
 	id := c.Param("id")
 
-	zap.L().Info("ID is", zap.String("id", id))
+	zap.L().Debug("ID is", zap.String("id", id))
 
 	//convert id to int
 	userID, err := strconv.Atoi(id)

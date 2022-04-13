@@ -80,7 +80,7 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 	//check if current quantity of each product is enough for order
 	for productID, quantity := range productIdQuantityMap {
 		var product product.Product
-		result = tx.Where("id = ?", productID).First(&product)
+		result = tx.Where("products.id = ?", productID).Joins("Category").Joins("Store").First(&product)
 
 		if result.Error != nil {
 			tx.Rollback()

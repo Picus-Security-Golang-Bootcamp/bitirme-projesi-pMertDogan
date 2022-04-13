@@ -168,6 +168,7 @@ func (c *BasketRepository) GetBasketsByUserIDWithPaginations(userID int, page, p
 FROM baskets
 Join products ON products.id = baskets.product_id
 WHERE user_id = ?
+and baskets.deleted_at is null
 limit ?
 offset ?
 `, userID, pageSize, page).Scan(&basket)
