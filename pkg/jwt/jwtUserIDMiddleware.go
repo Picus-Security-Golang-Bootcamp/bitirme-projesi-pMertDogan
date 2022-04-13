@@ -41,9 +41,6 @@ func JWTUserIDMiddleware(secretKey string, accesTokenLifeMinute int64) gin.Handl
 				}
 				
 				//ACCEPT userID
-				zap.L().Debug("Debug test")
-				zap.L().Sugar().Debug(decodedClaims.UserId)
-				zap.L().Debug(c.Param("id"))
 
 				routeID := c.Param("id")
 				if routeID == "" {

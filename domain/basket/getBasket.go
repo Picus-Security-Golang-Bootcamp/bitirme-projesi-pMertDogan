@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusBootCampFinalProject/domain"
+	"go.uber.org/zap"
 )
 
 func GetBasket(c *gin.Context) {
@@ -17,7 +18,7 @@ func GetBasket(c *gin.Context) {
 	userID := c.Param("id")
 
 	//get page from url
-	page := c.DefaultQuery("page","1")
+	page := c.DefaultQuery("page","0")
 	//get pageSize from url
 	pageSize := c.DefaultQuery("pageSize","50")
 
@@ -49,6 +50,7 @@ func GetBasket(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	zap.L().Debug("basket getted")
 
 	//return success
 	response.ResponseCode = http.StatusOK

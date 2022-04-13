@@ -103,7 +103,7 @@ func (c *CategoryRepository) GetAllCategoriesWithLimit(limit int) (Categorys, er
 	return categories, nil
 
 }
-
+//Get Categories by ID from DB and return it as Category struct type and error if exist 
 func (c *CategoryRepository) GetAllCategoriesWithPagination(page, pageSize int) (Categorys, error) {
 
 	var categories Categorys

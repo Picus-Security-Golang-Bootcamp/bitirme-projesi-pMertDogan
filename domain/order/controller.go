@@ -17,4 +17,5 @@ func OrderControllerDef(router *gin.Engine, cfg *config.Config) {
     
 	order.POST("/", CompleteOrder)
 	order.GET("/", GetOrders)
+	order.POST(":orderID", CancelOrder)
 }

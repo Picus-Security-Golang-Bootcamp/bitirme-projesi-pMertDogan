@@ -53,11 +53,11 @@ func GetOrders(c *gin.Context) {
 	//get orders from userID
 	orders, err := Repo().GetOrders(userID,pageNoInt,pageSizeInt)
 
-
-
 	
 	//return succes as response
 	response.Data = orders
 	response.ResponseCode = http.StatusOK
+	response.PageNo = pageNo
+	response.PageSize = pageSize
 	c.JSON(http.StatusOK, response)
 }

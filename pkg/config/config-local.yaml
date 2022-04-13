@@ -49,5 +49,8 @@ StoreData:
   Email: help@localhost.com
   Address: Turkey
 
-
+Logger:
+  Development: true
+  Encoding: json
+  Level: info
 

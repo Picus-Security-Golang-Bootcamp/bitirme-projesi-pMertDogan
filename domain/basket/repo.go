@@ -174,6 +174,7 @@ offset ?
 `, userID, pageSize, page).Scan(&basket)
 	// and baskets.deleted_at is null can be added to filter deleted baskets
 
+	zap.L().Debug(result.Statement.SQL.String())
 	/*
 
 		ALTERNATIVE QUERY WITH STORE FIELDS

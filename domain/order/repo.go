@@ -1,7 +1,6 @@
 package order
 
 import (
-	// "errors"
 
 	"encoding/json"
 
@@ -69,6 +68,7 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 
 	//https://www.postgresql.org/docs/9.4/explicit-locking.html
 	//lock product rows using productIDs array
+	//With this lock we can avoid race conditions , false updates
 	result := c.db.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id in ?", productIDs).Find(&product.Products{})
 
 	if result.Error != nil {
@@ -76,6 +76,9 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 	}
 
 	//Open Transaction
+	//If one of them fail then rollback transaction
+	//So we secure our data with transaction
+	//If all operations are valid we will commit it and unlock product rows
 	tx := c.db.Begin()
 	var buyedProducts product.Products
 	//check if current quantity of each product is enough for order
@@ -100,28 +103,9 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 		}
 	}
 
-
-
-
-
-	//we dont need this to make add extra query. Transaction will do it for us if there is an error
-	// //If enough quantity then update product quantity
-	// for productID, quantity := range productQuantityMap {
-	// 	var product product.Product
-	// 	result = tx.Where("id = ?", productID).First(&product)
-
-	// 	if result.Error != nil {
-	// 		tx.Rollback()
-	// 		return result.Error
-	// 	}
-
-	// 	product.StockCount = product.StockCount - quantity
-	// 	tx.Save(&product)
-	// }
-
 	var orders Orders
 	var order Order
-	
+
 	order.UserID = baskets[0].UserID
 	order.Comment = comment
 	order.ShippingAdress = shipingAddress
@@ -140,25 +124,95 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 		orders = append(orders, order)
 		//Add quantity information to order
 	}
-	
+
 	//add orders to orders table
 	tx.Save(&orders)
 
 	//delete completed basket items
 	tx.Delete(&baskets)
-	
+
 	//end transaction
 	return tx.Commit().Error
 }
 
 //get orders of customer with pagination
-func (c *OrderRepository) GetOrders(userID int,page , pageSize int) (Orders, error) {
+func (c *OrderRepository) GetOrders(userID int, page, pageSize int) (Orders, error) {
 	var orders Orders
 	result := c.db.Where("user_id = ?", userID).
-	Scopes(domain.Paginate(page, pageSize)).
-	Find(&orders)
+		Scopes(domain.Paginate(page, pageSize)).
+		Find(&orders)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return orders, nil
+}
+
+/*
+Get user check is user has order with requested order id
+*/
+func (c *OrderRepository) HasOrder(userID, orderID int) (*Order,error) {
+	var order Order
+	result := c.db.Where("user_id = ? AND id = ?", userID, orderID).First(&order)
+	if result.Error != nil {
+		return nil,result.Error
+	}
+	return &order,nil
+}
+
+/*
+Cancel order if order created time is not older than 14 days.
+All operations will be done in transaction
+After cancel order we will delete order from orders table
+We will add stock count to product table
+*/
+func (c *OrderRepository) CancelOrder(order Order) error {
+
+	//start transaction
+	tx := c.db.Begin()
+
+	// lock product rows
+	result := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id = ?", order.ProductID).Find(&product.Products{})
+	if result.Error != nil {
+		tx.Rollback()
+		return  errors.Wrap(result.Error, "Error while locking product rows")
+	}
+
+	//lock order rows
+	result = tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id = ?", order.ID).Find(&Orders{})
+	if result.Error != nil {
+		tx.Rollback()
+		return errors.Wrap(result.Error, "Error while locking order rows")
+	}
+
+	
+	//delete order
+	result = tx.Delete(&order)
+
+	if result.Error != nil {
+		return  result.Error
+	}
+	zap.L().Debug("order deleted", zap.Any("order", order))
+
+	//add deleted order quantity to product table
+	//convert order.Quantity to string
+	// quantity := strconv.Itoa(order.Quantity)
+	//convert order.ProductID to string
+	// productID := strconv.Itoa(order.ProductID)
+
+	// result =	tx.Raw("UPDATE products SET stock_count = stock_count + " + quantity+ " WHERE id = "+ productID)
+	// Raw SQL {"SQL : ": "UPDATE products SET stock_count = stock_count + $1 WHERE id = $2"}
+
+	result = tx.Exec("UPDATE products SET stock_count = stock_count + ? WHERE id = ?", order.Quantity, order.ProductID)
+
+	zap.L().Debug("Raw SQL", zap.Any("SQL : ", 	result.Statement.SQL.String()))
+	if result.Error != nil {
+		return  result.Error
+	}
+	zap.L().Debug("product stock count updated")
+
+
+	//end transaction
+	return tx.Commit().Error
+
+
 }

@@ -67,11 +67,11 @@ func VerifyDecodeToken(token string, secret string) (*DecodedJWTToken, error) {
 	}
 
 	var decodedToken DecodedJWTToken
-	zap.L().Sugar().Info("Decoded token: ", decoded)
+	zap.L().Sugar().Debug("Decoded token: ", decoded)
 	decodedClaims := decoded.Claims.(jwt.MapClaims)
 	jsonString, _ := json.Marshal(decodedClaims)
-	zap.L().Sugar().Info("jsonString: ", string(jsonString))
+	zap.L().Sugar().Debug("jsonString: ", string(jsonString))
 	json.Unmarshal(jsonString, &decodedToken)
-	zap.L().Sugar().Info("decodedToken: ", decodedToken)
+	zap.L().Sugar().Debug("decodedToken: ", decodedToken)
 	return &decodedToken, nil
 }
