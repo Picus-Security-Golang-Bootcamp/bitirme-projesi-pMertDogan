@@ -56,7 +56,8 @@ func CancelOrder(c *gin.Context) {
 	//check order createdAT time is not older than 14 days
 	if order.CreatedAt.AddDate(0, 0, 14).Before(time.Now()) {
 		//cancel Time Period is over
-		response.ErrMsg = "Cancel Time Period is over"
+		response.ErrMsg = "Cancel  Period is over, user cant cancel order"
+		response.ErrDsc = "This order is created at " + order.CreatedAt.String() + ". Can't be canceled after 14 days . Total days after order creation is " + strconv.Itoa(int(time.Now().Sub(order.CreatedAt).Hours()/24)) + " and current date is " + time.Now().String()
 		c.JSON(http.StatusNotAcceptable, response)
 		return
 	}
