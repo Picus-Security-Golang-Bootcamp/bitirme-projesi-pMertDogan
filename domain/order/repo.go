@@ -135,7 +135,9 @@ func (c *OrderRepository) CompleteOrder(baskets basket.Baskets, comment, shiping
 		}
 		order.ProductSnapshot = v
 		order.ProductID = int(product.ID)
+		order.Quantity = productIdQuantityMap[int(product.ID)]
 		orders = append(orders, order)
+		//Add quantity information to order
 	}
 	
 	//add orders to orders table
