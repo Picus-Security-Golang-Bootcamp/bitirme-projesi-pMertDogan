@@ -41,6 +41,7 @@ func UploadCategorysFromCSV(c *gin.Context) {
 		//call category repo and save it to db
 		Repo().CreateCategories(csvCategories)
 
+		//display 50x categories
 		v, err := Repo().GetAllCategoriesWithLimit(50)
 		if err != nil {
 			zap.L().Error("error getting all categories", zap.Error(err))
@@ -49,6 +50,7 @@ func UploadCategorysFromCSV(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, response)
 			return
 		}
+		
 		response.Data = v
 		c.JSON(http.StatusOK, response)
 }

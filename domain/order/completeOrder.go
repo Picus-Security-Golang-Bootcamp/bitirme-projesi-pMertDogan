@@ -67,6 +67,13 @@ func CompleteOrder(c *gin.Context) {
 	//start #transaction and #lock specific row inside product table
 	//Lets check is current quantity of each product is enough for order
 
+	if err != nil {
+		response.ErrMsg = "Cannot complete order"
+		response.ErrDsc = err.Error()
+		response.ResponseCode = http.StatusNotAcceptable
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	//return succes as response
 	response.ResponseCode = http.StatusOK

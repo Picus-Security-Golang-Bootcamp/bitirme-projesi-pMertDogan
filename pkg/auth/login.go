@@ -12,6 +12,9 @@ import (
 )
 
 func (a *authHandler) login(c *gin.Context) {
+
+	//response is json
+	c.Header("Content-Type", "application/json")
 	var req user.LoginRequestDTO
 	var res user.ResponseModel
 	//extract user from request
@@ -19,6 +22,7 @@ func (a *authHandler) login(c *gin.Context) {
 		res.ErrMsg = "Your request body is not valid. Please check your request body. In Body email and password are required."
 		res.ResponseCode = http.StatusBadRequest
 		c.JSON(http.StatusBadRequest, res)
+		return
 	}
 	//Verify is dbUser exist with the same hash
 	dbUser, err := user.Repo().CheckIsUserExistWithThisEmail(req.Email)

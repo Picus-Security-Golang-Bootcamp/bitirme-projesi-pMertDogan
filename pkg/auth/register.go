@@ -9,6 +9,8 @@ import (
 
 func (a *authHandler) register(c *gin.Context) {
 
+	//response is json
+	c.Header("Content-Type", "application/json")
 	var req user.RegisterRequestDTO
 	var res user.ResponseModel
 	//extract user from request with binding validation 
@@ -50,6 +52,9 @@ func (a *authHandler) register(c *gin.Context) {
 	}
 
 	res.ResponseCode = http.StatusCreated
+	res.UserData.Name = req.Name
+	res.UserData.Email = req.Email
+
 
 	c.JSON(http.StatusOK, res)
 

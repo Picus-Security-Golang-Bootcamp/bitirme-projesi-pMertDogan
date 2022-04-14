@@ -54,8 +54,8 @@ func GetAllProductWithPagination(c *gin.Context) {
 
 	response.ResponseCode = http.StatusOK
 	response.Data = v
-	response.PageNo = pageNo
-	response.PageSize = pageSize
+	response.PageNo ,response.PageSize = domain.CalcPageAndSizeReturnString(pageNoInt, pageSizeInt)
+
 	
 	c.JSON(http.StatusOK, response)
 

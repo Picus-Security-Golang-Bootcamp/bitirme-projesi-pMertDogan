@@ -142,12 +142,7 @@ and baskets.deleted_at is null
 func (c *BasketRepository) GetBasketsByUserIDWithPaginations(userID int, page, pageSize string) (BasketSToResponseDTO, error) {
 	var basket BasketSToResponseDTO
 	var result *gorm.DB
-	// result = c.db.Joins("Product").Where("user_id = ?", userID).Find(&basket)
-
-	// result = c.db.Raw(`
-	// SELECT * FROM baskets
-	// Join products ON products.id = baskets.product_id
-	// WHERE user_id = ?`, userID).Scan(&basket)
+	
 	result = c.db.Raw(`
 	SELECT 
 	baskets.id,
@@ -175,44 +170,7 @@ offset ?
 	// and baskets.deleted_at is null can be added to filter deleted baskets
 
 	zap.L().Debug(result.Statement.SQL.String())
-	/*
 
-		ALTERNATIVE QUERY WITH STORE FIELDS
-				result = c.db.Raw(`
-				Select * FROM (SELECT * FROM baskets
-					Join products ON products.id = baskets.product_id
-					WHERE user_id = ?) as x
-					JOIN stores ON stores.id = x.store_id`, userID).Scan(&basket)
-
-			{
-			    "responseCode": 200,
-			    "data": [
-			        {
-			            "ID": 1,
-			            "CreatedAt": "2022-04-08T22:31:08.604101+03:00",
-			            "UpdatedAt": "2022-04-08T22:31:08.604101+03:00",
-			            "DeletedAt": null,
-			            "user_id": 2,
-			            "totalQuantity": 5,
-			            "product_id": 1,
-			            "sku": "xm1",
-			            "productName": "Xiaomi Mi 6",
-			            "description": "Mert's Store",
-			            "color": "black",
-			            "price": 2200,
-			            "stockCount": 763,
-			            "categoryId": 1,
-			            "storeId": 1,
-			            "Name": "Mert's Store",
-			            "Phone": "905555555555",
-			            "Email": "help@localhost.com",
-			            "Address": "Turkey"
-			        }
-			    ]
-			}
-	*/
-
-	zap.L().Debug(result.Statement.SQL.String())
 	if result.Error != nil {
 		return basket, result.Error
 	}

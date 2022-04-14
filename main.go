@@ -58,7 +58,7 @@ func main() {
 	basket.Repo().Migrations()
 	order.Repo().Migrations()
 
-	//Create Admin , Store etc
+	//Create Default values for  Admin , Store etc..
 	domain.InitDBDefaults(cfg)
 
 	//Init Routes

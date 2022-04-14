@@ -35,6 +35,8 @@ func GetAllCategoriesWithPagination(c *gin.Context) {
 		return
 	}
 
+	
+
 	//get all categories with pagination
 	v, err := Repo().GetAllCategoriesWithPagination(pageNoInt, pageSizeInt)
 
@@ -54,8 +56,8 @@ func GetAllCategoriesWithPagination(c *gin.Context) {
 
 	response.ResponseCode = http.StatusOK
 	response.Data = v
-	response.PageNo = pageNo
-	response.PageSize = pageSize
+	//To fix the problem if user send pageSize > 100. We will return only 100
+	response.PageNo ,response.PageSize = domain.CalcPageAndSizeReturnString(pageNoInt, pageSizeInt)
 	c.JSON(http.StatusOK, response)
 
 }
