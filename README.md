@@ -80,7 +80,7 @@ JWTConfig:
 - Admins can create a product. Bulk Product creation is available using CSV file. Check API documents for more info!
 12. List Product
 - Everyone can list avaiable products.Pagination applied
-13. Search Product�
+13. Search Product
 - Search product by sku,desc,name..
 14. Delete Product
 - Admins can delete product. Deletes are soft delete.
