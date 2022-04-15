@@ -55,39 +55,39 @@ JWTConfig:
 
 # Summary of the supported Endpoints
 
-1. Sign-up
+## 1. Sign-up
 - Client send email,password and name to register user. If its valid user registered.
-2. Login
+## 2. Login
 - With email and password combination user can login and get acces & refresh token for logged user
-3. Create Bulk Category
+## 3. Create Bulk Category
 - Admins can generate bulk category from csv file. Example category file can be found on project root.
 [ExampleCategoryCSV](https://github.com/Picus-Security-Golang-Bootcamp/bitirme-projesi-pMertDogan/blob/main/exampleCategory.csv)
-4. List Category
+## 4. List Category
 - List avialable categorys with pagination
-5. AddToBasket
+## 5. AddToBasket
 - Users who logged can add products to basket. Authorization requires valid JWT acces token.
-6. List Basket Items
+## 6. List Basket Items
 - User can be list his basket items
-7. Update/Delete Basket Items
+## 7. Update/Delete Basket Items
 - Update or Delete basket items
-8. Complete Order
+## 8. Complete Order
 - User can buy requested baskets. BasketID is required to know which items will be buyed 
-9. List Orders
+## 9. List Orders
 - User can display orders, pagination applied
-10. Cancel Order
+## 10. Cancel Order
 - User can cancel order is order created time is not older than 14 days.If its older than 14 days client get denied from api
-11. Create Product
+## 11. Create Product
 - Admins can create a product. Bulk Product creation is available using CSV file. Check API documents for more info!
-12. List Product
+## 12. List Product
 - Everyone can list avaiable products.Pagination applied
-13. Search Product
+## 13. Search Product
 - Search product by sku,desc,name..
-14. Delete Product
+## 14. Delete Product
 - Admins can delete product. Deletes are soft delete.
-15. Update Product
+## 15. Update Product
 - Admins can update product with JSON body
 
-#Tech Stack
+# Tech Stack
 - GO
 - Gin - to Handle HTTP Requests
 - Postgres - our Database run on Postgres
