@@ -13,7 +13,7 @@ type Orders []Order
 
 type Order struct {
 	gorm.Model
-	UserID int
+	UserID int 
 	 ProductID int
 	ProductSnapshot datatypes.JSON //We can store snapshot of product as JSON
 	Comment string

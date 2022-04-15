@@ -5,6 +5,9 @@ DB
 https://www.figma.com/file/y4zTgzP0721nSmujTu0lD9/Untitled?node-id=0%3A1
 
 
+https://app.swaggerhub.com/apis/763/BasketApp/1.0.0
+
+
 1. Sign-up
 - Kullanicidan gerekli bilgileri alip veri tabaninda bir kullanici olusturmalisiniz ve
 cevap olarak JWT token donmelisiniz.
