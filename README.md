@@ -87,7 +87,7 @@ JWTConfig:
 15. Update Product
 - Admins can update product with JSON body
 
-Tech Stack
+#Tech Stack
 - GO
 - Gin - to Handle HTTP Requests
 - Postgres - our Database run on Postgres
