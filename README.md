@@ -15,6 +15,44 @@ Also Swagger Document available.
 ![Database ERD Image](dbERD.png?raw=true "Title")
 
 
+# Startup Configs
+
+This project is using a config file to get startup or const parameters from config file. To preview default one check this link > [Config File](https://github.com/Picus-Security-Golang-Bootcamp/bitirme-projesi-pMertDogan/blob/main/pkg/config/config-local.yaml)
+
+You can specify Database config. Its should be updated with your own credentials..
+
+DBConfig:
+  Host: localhost
+  Port: 5432
+  Dbname: basketStore
+  Username: postgres
+  Password: 123456
+  
+  ## Disable dev flag 
+  
+  To avoid debug logs on console disable dev flag
+  
+  -Logger:
+  Development: true
+  Encoding: json
+  Level: info
+  
+  to 
+  
+  -Logger:
+  Development: false
+  Encoding: json
+  Level: info
+
+## JWT Config
+JWT session time periods can be change from config. Dont forget change SecretKey to stronger one. Bcrypto used to hash & salt
+
+JWTConfig:
+  SecretKey: dummySecretKey
+  RefreshTokenLifeMinute : 1440
+  AccesTokenLifeMinute : 100
+
+
 # Summary of the supported Endpoints
 
 1. Sign-up
