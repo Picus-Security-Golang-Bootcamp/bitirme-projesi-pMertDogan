@@ -1,6 +1,6 @@
 # Patika - Picus Go Web Development Final Project
 
-On this final project we develop a REST API Backend built with Go to handle all CRUD operations. Tech Stack is : Go , Gin , GORM, ZAP and PostreSQL
+On this final project we develop  REST API Backend built with Go to handle all Basket Apps possible CRUD operations. Tech Stack is : Go , Gin , GORM, ZAP and PostreSQL
 
 Detailed endpoint definations can be found on Postman or Swagger(Auto Generated from Postman) document.
 
