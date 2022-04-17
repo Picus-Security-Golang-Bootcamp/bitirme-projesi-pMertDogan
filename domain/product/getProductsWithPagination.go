@@ -35,6 +35,7 @@ func GetAllProductWithPagination(c *gin.Context) {
 	}
 
 	//get all categories with pagination
+	// v, err := Repo().GetAllWithPagination(pageNoInt, pageSizeInt)
 	v, err := Repo().GetAllWithPagination(pageNoInt, pageSizeInt)
 	
 	if err != nil {

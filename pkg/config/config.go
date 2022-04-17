@@ -83,6 +83,8 @@ func LoadConfig(filename string) (*Config, error) {
 	// viper.SetConfigType("yaml")   // REQUIRED if the config file does not have the extension in the name
 	// v.AddConfigPath(".")
 	v.AddConfigPath("./pkg/config/")
+	// add for TestGetAllProductWithPagination
+	v.AddConfigPath("../../pkg/config/")
 	v.AutomaticEnv()
 
 	//read config file

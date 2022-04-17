@@ -5,9 +5,12 @@ go 1.18
 require gorm.io/driver/postgres v1.3.1
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gorm.io/driver/mysql v1.3.2 // indirect
 )
 
@@ -47,6 +50,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.10.1 // indirect
+	github.com/stretchr/testify v1.7.1
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	go.uber.org/atomic v1.9.0 // indirect

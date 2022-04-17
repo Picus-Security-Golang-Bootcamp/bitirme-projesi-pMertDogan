@@ -35,6 +35,7 @@ func ready(c *gin.Context) {
 			"message": "There is a problem with DB connection",
 		})
 	}
+	
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "service is runnng",

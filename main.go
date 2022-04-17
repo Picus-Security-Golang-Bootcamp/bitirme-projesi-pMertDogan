@@ -46,7 +46,11 @@ func main() {
 	//init Repos
 	category.CategoryRepoInit(db)
 	user.UserRepoInit(db)
-	product.ProductRepoInit(db)
+	//This one has abstract layer to mock
+	product.ProductRepoInit(&product.GormProductRepo{
+		DB: db,
+	})
+
 	store.StoreRepoInit(db)
 	basket.BasketRepoInit(db)
 	order.OrderRepoInit(db)
@@ -68,7 +72,6 @@ func main() {
 	product.ProductControllerDef(router, cfg)
 	basket.BasketControllerDef(router, cfg)
 	order.OrderControllerDef(router, cfg)
-	
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.ServerConfig.Port),
